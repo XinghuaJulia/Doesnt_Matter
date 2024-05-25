@@ -1,0 +1,27 @@
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, SafeAreaView, Image, TouchableOpacity, Button, Alert } from 'react-native';
+
+export default function GptScreen() {
+  const handlePress = () => console.log("text died");
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.text}> Open up App.js to start working on your app! ffffffffffffffffffffffffffffffffffff</Text>
+
+      <StatusBar style="auto" />
+    </SafeAreaView>
+  );
+}
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: 24,
+  },
+});
