@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import * as React from 'react';
+import {useState} from 'react';
+import { Button, View, Text, StyleSheet, SafeAreaView, TextInput } from 'react-native';
 import { supabase } from '../lib/supabase'
 
-export default function App() {
+
+export default function HomeScreen({ navigation }) {
   const [text, setText] = useState('');
   const [response, setResponse] = useState('Hi');
 
@@ -19,6 +21,7 @@ export default function App() {
 
           const result = await supabase.rpc('generate_text', {description: 'How to clean ' + text + 'so that it is fit for recycling, keep    response under 100 characters.'});
 
+          console.log(result);
           setResponse(result.data.choices[0].message.content);
         } else {
           setResponse("Item not even recyclable. Go put yourself into the bin to make the environemtn clean.");
@@ -27,38 +30,35 @@ export default function App() {
       console.error(error);
     }
   };
+  
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Button title="Go to Login" onPress={() => navigation.navigate("LoginScreen")} />
+      <Button title="Go to upload trash screen" onPress={() => navigation.navigate("TrashUploadScreen")} />
+
+      <Text style={styles.text}> Input the trash you want to be, not the trash you are.</Text>
       <TextInput
         style={styles.input}
-        placeholder="Type your message"
+        placeholder="Enter the trash. NOW."
         value={text}
         onChangeText={setText}
       />
-      <Button title="Send" onPress={handlePress} />
+      <Button title="generate tips" onPress={handlePress} />
       <Text style={styles.response}>{response}</Text>
-    </View>
+    </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: 'white',
     alignItems: 'center',
-    padding: 16,
+    justifyContent: 'center',
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
-    width: '100%',
-  },
-  response: {
-    marginTop: 20,
-    fontSize: 16,
+  text: {
+    fontSize: 24,
   },
 });
