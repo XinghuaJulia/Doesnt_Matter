@@ -1,3 +1,6 @@
+/*
+deprecated: used SupaBase as backend server instead of expo-router
+*/
 // import { ExpoRequest, ExpoResponse } from 'expo-router/server';
 // import OpenAI from 'openai';
 
