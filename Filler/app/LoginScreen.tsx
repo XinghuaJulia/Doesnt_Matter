@@ -6,7 +6,7 @@ import Account from '../components/Account'
 import { View, Button } from 'react-native'
 import { Session } from '@supabase/supabase-js'
 
-export default function HomeScreen() {
+export default function LoginScreen() {
   const [session, setSession] = useState<Session | null>(null)
 
   useEffect(() => {

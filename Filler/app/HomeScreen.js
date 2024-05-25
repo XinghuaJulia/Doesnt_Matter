@@ -4,7 +4,7 @@ import { Button, View, Text, StyleSheet, SafeAreaView, TextInput } from 'react-n
 import { supabase } from '../lib/supabase'
 
 
-export default function GptScreen({ navigation }) {
+export default function HomeScreen({ navigation }) {
   const [text, setText] = useState('');
   const [response, setResponse] = useState('Hi');
 
@@ -34,7 +34,7 @@ export default function GptScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Button title="Go to Home" onPress={() => navigation.navigate("Home")} />
+      <Button title="Go to Login" onPress={() => navigation.navigate("LoginScreen")} />
       <Button title="Go to upload trash screen" onPress={() => navigation.navigate("TrashUploadScreen")} />
 
       <Text style={styles.text}> Input the trash you want to be, not the trash you are.</Text>
