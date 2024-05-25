@@ -19,6 +19,7 @@ export default function App() {
 
           const result = await supabase.rpc('generate_text', {description: 'How to clean ' + text + 'so that it is fit for recycling, keep    response under 100 characters.'});
 
+          console.log(result);
           setResponse(result.data.choices[0].message.content);
         } else {
           setResponse("Item not even recyclable. Go put yourself into the bin to make the environemtn clean.");

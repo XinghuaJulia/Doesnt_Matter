@@ -25,6 +25,7 @@
     "expo-gl-cpp": "^11.4.0",
     "expo-image-picker": "~15.0.5",
     "expo-linking": "~6.3.1",
+    "expo-router": "^3.5.14",
     "expo-status-bar": "~1.12.1",
     "expo-updates": "~0.25.14",
     "openai": "^4.47.1",
