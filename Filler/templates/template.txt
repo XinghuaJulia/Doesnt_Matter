@@ -1,0 +1,38 @@
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, SafeAreaView, Image, TouchableOpacity, Button, Alert } from 'react-native';
+
+export default function App() {
+  const handlePress = () => console.log("text died");
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text numberOfLines={1}  onPress={handlePress} style={{ textSize: 300 }}> Open up App.js to start working on your app! ffffffffffffffffffffffffffffffffffff</Text>
+
+      <Image blurRadius={5} source={require('./assets/favicon.png')}/>
+      <Image source={{
+        width: 200,
+        height: 200,
+        uri: "https://picsum.photos/200/300"}}/>
+
+      <Button 
+        color="black"
+        title="CLICK ME" 
+        onPress={() => Alert.alert("button tapped", "My message", [
+          { text: "Yes", onPress: () => console.log("Yes pressed")},
+          { text: "No", onPress: () => console.log("No pressed")},
+        ])}/>
+
+      <StatusBar style="auto" />
+    </SafeAreaView>
+  );
+}
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
