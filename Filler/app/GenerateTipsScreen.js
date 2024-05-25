@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import { supabase } from '../lib/supabase'
 
-export default function App() {
+export default function GenerateTipsScreen() {
   const [text, setText] = useState('');
   const [response, setResponse] = useState('Hi');
 
