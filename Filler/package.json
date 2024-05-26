@@ -23,6 +23,7 @@
     "expo-constants": "~16.0.1",
     "expo-gl": "^13.6.0",
     "expo-gl-cpp": "^11.4.0",
+    "expo-image": "^1.12.9",
     "expo-image-picker": "~15.0.5",
     "expo-linking": "~6.3.1",
     "expo-router": "^3.5.14",
