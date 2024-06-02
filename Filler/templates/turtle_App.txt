@@ -1,0 +1,51 @@
+
+class GameScreen extends React.Component {
+    handlePress = () => {
+        if (this.state.text > 0 && this.state.text <= 100) {
+            this.setState({value: this.state.text});
+        } else {
+            Alert.alert("Invalid Input", "input must be between 0 and 100");            
+        }
+    }
+
+    createPet = () => {
+        this.setState({
+            turtle: new Turtle("BOB", 100),
+            value: Turtle.HAPPINESS_INIT
+        })
+        console.log(this.state);
+    };
+
+    killPet = () => {
+        console.log("killed");
+        this.setState({
+            turtle: null,
+            value: Turtle.HAPPINESS_DEAD
+        });
+    };
+
+    //console.log("game screen rendered");
+
+    render() {
+        return (
+            <View>
+              <TextInput
+                placeholder="Type your message"
+                value={this.state.text}
+                inputMode='numeric'
+                onChangeText={this.state.text}
+              />
+              <Button title="Send" onPress={this.handlePress} />
+              <Text>{this.state.value}</Text>
+              <Button title="Create new dino" onPress={this.createPet} />
+              <Button title="kill dino" onPress={this.killPet} />
+
+
+              <Text>Pet name is: {this.state.turtle ? this.state.turtle.name : 'no pet'}</Text>
+              <Button title="add 20" onPress={this.state.turtle ? this.state.turtle.play : () => {}} />
+            </View>
+          );
+    }
+}
+
+export default GameScreen;
