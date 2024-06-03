@@ -13,9 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.uselesstrash06.Filler"
     },
     "android": {
+      "runtimeVersion": "1.0.0",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -31,9 +33,6 @@
       "eas": {
         "projectId": "81b18e98-c531-46ef-b2ed-e54ebbc217b4"
       }
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
     },
     "updates": {
       "url": "https://u.expo.dev/81b18e98-c531-46ef-b2ed-e54ebbc217b4"
