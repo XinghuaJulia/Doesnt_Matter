@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import axios, { AxiosHeaders } from 'axios';
 
 
-export default function TrashUploadScreen() {
+export default function TrashUploadScreen( {navigation} ) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [predictions, setPredictions] = useState(null);
@@ -104,6 +104,9 @@ const uploadImage = async (imageUri) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Button title="Go to upload trash screen" onPress={() => navigation.navigate("TrashUploadScreen")} />
+      <Button title="Go to virtual pet screen" onPress={() => navigation.navigate("GameScreen")} />
+        
       <Text style={styles.text}>Upload your trashy images here</Text>
       <Button title="Choose a photo" onPress={pickImageAsync} />
       {loading && <ActivityIndicator size="large" color="#0000ff" />}

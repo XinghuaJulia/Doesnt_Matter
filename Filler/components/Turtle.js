@@ -30,10 +30,7 @@ export default function Turtle() {
       />
       <Text>Happiness: {happiness}</Text>
       <Button title="Play with Pet" onPress={playWithPet} />
-      <Image 
-        style={styles.image} 
-        source={happiness > 50 ? happyFace : deadFace}
-      />
+    
       <Text>Current state: {happiness > 50 ? 'happy' : 'sad'}</Text>
       <Text style={styles.text}> Your pet will die if happiness is less than 50. In future: implement point system where user gain points through recycling</Text>
     </View>

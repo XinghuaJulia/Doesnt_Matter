@@ -2,6 +2,7 @@ import * as React from 'react';
 import {useState} from 'react';
 import { Button, View, Text, StyleSheet, SafeAreaView, TextInput } from 'react-native';
 import { supabase } from '../lib/supabase'
+import Turtle from '../components/Turtle';
 
 
 export default function HomeScreen({ navigation }) {
