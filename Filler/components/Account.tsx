@@ -4,7 +4,8 @@ import { StyleSheet, View, Alert, Text } from 'react-native'
 import { Button, Input } from '@rneui/themed'
 import { Session } from '@supabase/supabase-js'
 import Avatar from './Avatar'
-import { FlashList } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list"
+import { useNavigation } from '@react-navigation/native'
 
 
 
@@ -14,7 +15,9 @@ export default function Account({ session }: { session: Session }) {
   const [website, setWebsite] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
   const [users, setUsers] = useState<{id: string}[]>([])
+  const [points, setPoints] = useState(0)
 
+  const navigation = useNavigation()
 
   useEffect(() => {
     if (session) getProfile();
@@ -34,9 +37,10 @@ export default function Account({ session }: { session: Session }) {
 
       const { data, error, status } = await supabase
         .from('profiles')
-        .select(`username, website, avatar_url`)
+        .select(`username, website, avatar_url, points`)
         .eq('id', session?.user.id)
         .single()
+      
       if (error && status !== 406) {
         throw error
       }
@@ -45,6 +49,7 @@ export default function Account({ session }: { session: Session }) {
         setUsername(data.username)
         setWebsite(data.website)
         setAvatarUrl(data.avatar_url)
+        setPoints(data.points)
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -90,9 +95,45 @@ export default function Account({ session }: { session: Session }) {
     }
   }
 
+  async function updatePoints() {
+    try {
+      const { data, error, status } = await supabase
+        .from('profiles')
+        .select(`points`)
+        .eq('id', session?.user.id)
+        .single()
+
+      const updates = {
+        id: session?.user.id,
+        points: data.points + 1,
+      }
+
+      await supabase.from('profiles').upsert(updates)
+      setPoints(data.points + 1)
+
+      if (error) {
+        throw error
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <View style={styles.container}>
-      
+
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Button
+          title={'add points'}
+          onPress={() => updatePoints()}
+          disabled={loading}
+        />
+      </View>
+      <Text>Your current points are: {points || 0}</Text>
 
       <View>
         <Avatar
@@ -122,19 +163,15 @@ export default function Account({ session }: { session: Session }) {
         />
       </View>
 
+      
+
       <View style={styles.verticallySpaced}>
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View>
 
 
       
-      <View style={[styles.verticallySpaced, {height: 200}]}>
-        <FlashList
-            data={users}
-            renderItem={({ item }) => <Text>{item.id}</Text>}
-            estimatedItemSize={200}
-        />
-      </View>
+
 
       
     </View>

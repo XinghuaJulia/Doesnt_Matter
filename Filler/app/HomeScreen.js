@@ -35,9 +35,10 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Button title="Go to Login" onPress={() => navigation.navigate("LoginScreen")} />
-      <Button title="Go to upload trash screen" onPress={() => navigation.navigate("TrashUploadScreen")} />
-      <Button title="Go to virtual pet screen" onPress={() => navigation.navigate("GameScreen")} />
+      <Button title="Go to Login" onPress={() => navigation.navigate("Login")} />
+      <Button title="Go to upload trash screen" onPress={() => navigation.navigate("Upload Trash")} />
+      <Button title="Go to virtual pet screen" onPress={() => navigation.navigate("Virtual Pet")} />
+
 
       <Text style={styles.text}> Input the trash you want to be, not the trash you are.</Text>
       <TextInput
