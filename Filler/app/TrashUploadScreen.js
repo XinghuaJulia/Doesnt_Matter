@@ -1,176 +1,18 @@
-// import * as React from 'react';
-// import {useState} from 'react';
-// import { Button, View, Text, StyleSheet, SafeAreaView, Image, Pressable } from 'react-native';
-// import * as ImagePicker from 'expo-image-picker';
-// import * as fs from 'fs';
-
-
-// export default function TrashUploadScreen() {
-//   const [selectedImage, setSelectedImage] = useState(null);
-
-//   const ImageViewer = ({ placeholderImageSource, selectedImage}) => {
-//     const imageSource = selectedImage  ? { uri: selectedImage } : placeholderImageSource;
-//     const axios = require("axios");
-//     const fs = require("fs");
-    
-//     const image = fs.readFileSync(imageSource, {
-//         encoding: "base64"
-//     });
-    
-//     axios({
-//         method: "POST",
-//         url: "https://detect.roboflow.com/waste-detection-ctmyy/9",
-//         params: {
-//             api_key: "fVle1jzgIZCSbIrWlDzQ"
-//         },
-//         data: image,
-//         headers: {
-//             "Content-Type": "application/x-www-form-urlencoded"
-//         }
-//     })
-//     .then(function(response) {
-//         console.log(response.data);
-//     })
-//     .catch(function(error) {
-//         console.log(error.message);
-//     });
-
-//     return <Image source={image} style={styles.image} />;
-//   }
-
-//   const CustomButton = ({ label, theme, onPress}) => {
-//     if (theme === "primary") {
-//       return (
-//         <View>
-//           <Pressable
-//             style={[styles.button, { backgroundColor: '#fff' }]}
-//             onPress={onPress}
-//           />
-//         </View>
-//       );
-//     }
-//   }
-
-//   const pickImageAsync = async () => {
-//     let result = await ImagePicker.launchImageLibraryAsync({
-//       allowsEditing: true,
-//       quality: 1,
-//     });
-
-//     if (!result.canceled) {
-//       setSelectedImage(result.assets[0].uri);
-//     } else {
-//       alert('You did not select any image.');
-//     }
-//   };
-
-  
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <Text style={styles.text}> Upload your trashy images here  </Text>
-//       <Button theme="primary" title="Choose a photo" onPress={pickImageAsync} />
-//       <View style={styles.imageContainer}>
-//         <ImageViewer
-//           placeholderImageSource={'../assets/favicon.png'}
-//           selectedImage={selectedImage}
-//         />
-//       </View>
-//     </SafeAreaView>
-//   );
-// }
-
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: 'white',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   text: {
-//     fontSize: 24,
-//   },
-//   image: {
-//     height: 200,
-//     width: 200,
-//   },
-//   button: {
-//     height: 50,
-//     width: 200,
-//   }
-// });
-
-
-// import * as React from 'react';
-// import { useState } from 'react';
-// import { Button, View, Text, StyleSheet, SafeAreaView, Image, Pressable } from 'react-native';
-// import * as ImagePicker from 'expo-image-picker';
-// import * as FileSystem from 'expo-file-system';
-// import axios from 'axios';
-
-// export default function TrashUploadScreen() {
-//   const [selectedImage, setSelectedImage] = useState(null);
-//   const [imageBase64, setImageBase64] = useState(null);
-
-//   const ImageViewer = ({ placeholderImageSource, selectedImage }) => {
-//     const imageSource = selectedImage ? { uri: selectedImage } : placeholderImageSource;
-
-//     return <Image source={imageSource} style={styles.image} />;
-//   };
-
-//   const CustomButton = ({ label, theme, onPress }) => {
-//     if (theme === 'primary') {
-//       return (
-//         <View>
-//           <Pressable style={[styles.button, { backgroundColor: '#fff' }]} onPress={onPress}>
-//             <Text>{label}</Text>
-//           </Pressable>
-//         </View>
-//       );
-//     }
-//     return null;
-//   };
-
-//   const pickImageAsync = async () => {
-//     let result = await ImagePicker.launchImageLibraryAsync({
-//       allowsEditing: true,
-//       quality: 1,
-//       base64: true,
-//     });
-
-//     if (!result.canceled) {
-//       setSelectedImage(result.uri);
-//       setImageBase64(result.base64);
-//     } else {
-//       alert('You did not select any image.');
-//     }
-//   };
-
-//   const uploadImage = async () => {
-//     if (!imageBase64) {
-//       alert('No image selected');
-//       return;
-//     }
-
-//     try {
-//       const response = await axios({
-//         method: 'POST',
-//         url: 'https://detect.roboflow.com/waste-detection-ctmyy/9',
-//         params: {
-//           api_key: 'fVle1jzgIZCSbIrWlDzQ',
-//    
-
 import React, { useEffect, useState } from 'react';
 import { Button, View, Text, StyleSheet, SafeAreaView, Image, Alert, ActivityIndicator, ImageBackground, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
-import axios from 'axios';
+import axios, { AxiosHeaders } from 'axios';
 
-export default function TrashUploadScreen() {
+
+export default function TrashUploadScreen( {navigation} ) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [predictions, setPredictions] = useState(null);
+  const [text, setText] = useState('');
+
+  
+
 
   useEffect(() => {
     getPermissionAsync();
@@ -190,11 +32,10 @@ export default function TrashUploadScreen() {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 0.5,
-      base64: true,
       size: 0.1
     });
 
-    console.log("Image picker result:", JSON.stringify(result)); // Log the full result to see what is returned
+    //console.log("Image picker result:", JSON.stringify(result)); // Log the full result to see what is returned
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
@@ -215,23 +56,42 @@ const uploadImage = async (imageUri) => {
   }
   setLoading(true);
   try {
-    const base64 = await FileSystem.readAsStringAsync(imageUri, { encoding: FileSystem.EncodingType.Base64 });
-    const data = `file=data:image/jpeg;base64,${base64}`;
-    
-    const response = await axios({
-      method: 'POST',
-      url: 'https://detect.roboflow.com/waste-detection-ctmyy/9',
-      params: {
-        api_key: 'fVle1jzgIZCSbIrWlDzQ',
-      },
-      data: data,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+    const apiURL = `BACKEND SERVER IP ADDRESS`;
+
+    const base64ImageData = await FileSystem.readAsStringAsync(imageUri, {
+      encoding: FileSystem.EncodingType.Base64,
     });
 
-    console.log('Response received from API');
-    setPredictions(response.data.predictions);
+    // const requestData = {
+    //   requests: [
+    //     {
+    //       image: base64ImageData
+    //     }
+    //   ]
+    // };
+
+    // console.log(axios.get(apiURL));
+
+    //const headers = new AxiosHeaders({'image': base64ImageData});
+    //console.log(headers.get('image'));
+
+    // const apiResponse2 = await axios.post(apiURL, {
+    //   image: "hello world"
+    // });
+
+
+    // const apiResponse = await fetch(apiURL, {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+    //     image: base64ImageData
+    //   })
+    // })
+
+    console.log(await fetch('apiURL', {
+      method: 'GET'
+    }));
+    //fetch request cannot be sent to somewhere insecure
+
   } catch (error) {
     console.error('Error during the image upload process:', error.response ? JSON.stringify(error.response.data) : error.message);
     Alert.alert('Error', 'Failed to upload image and get predictions: ' + (error.response ? error.response.data.error : error.message));
@@ -264,6 +124,7 @@ const uploadImage = async (imageUri) => {
           ))}
         </ImageBackground>
       )}
+      <Text>{text}</Text>
     </SafeAreaView>
   );
 }

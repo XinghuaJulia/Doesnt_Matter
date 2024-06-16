@@ -26,9 +26,12 @@ apply plugin: "com.facebook.react.rootproject"
 apply plugin: 'com.android.application'
 
 android {
+    namespace "Filler"
+
     compileSdkVersion 33
 
     defaultConfig {
+        applicationId "Filler"
         minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
