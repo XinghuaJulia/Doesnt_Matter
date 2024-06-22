@@ -7,6 +7,7 @@ import LoginScreen from './app/LoginScreen'
 import GameScreen from './app/GameScreen'
 import HomeScreen from './app/HomeScreen'
 import Account from './components/Account'
+import NewsScreen from './app/NewsScreen'
 
 
 const Stack = createNativeStackNavigator()
@@ -20,6 +21,7 @@ export default function App() {
         <Stack.Screen name="Upload Trash" component={TrashUploadScreen} />
         <Stack.Screen name="Virtual Pet" component={GameScreen} />
         <Stack.Screen name="Account" component={Account} />
+        <Stack.Screen name="News" component={NewsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

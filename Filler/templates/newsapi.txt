@@ -1,0 +1,14 @@
+curl https://newsapi.org/v2/everything -G \
+    -d q=Israel \
+    -d from=2024-06-17 \
+    -d sortBy=popularity \
+    -d language=en \
+    -d apiKey=702ee1baacdc47fd8b653efbec73b965
+
+
+
+    curl https://newsapi.org/v2/everything -G \
+    -d "q=Israel&sortBy=popularity&language=en&apiKey=702ee1baacdc47fd8b653efbec73b965"
+
+
+
