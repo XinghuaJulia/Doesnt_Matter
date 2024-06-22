@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useState} from 'react';
 import { Button, View, Text, StyleSheet, SafeAreaView, TextInput } from 'react-native';
 import { supabase } from '../lib/supabase'
-import Turtle from '../components/Turtle';
+import axios from 'axios';
 
 
 export default function HomeScreen({ navigation }) {
@@ -35,6 +35,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Button title="Go to News" onPress={() => navigation.navigate("News")} />
       <Button title="Go to Login" onPress={() => navigation.navigate("Login")} />
       <Button title="Go to upload trash screen" onPress={() => navigation.navigate("Upload Trash")} />
       <Button title="Go to virtual pet screen" onPress={() => navigation.navigate("Virtual Pet")} />
@@ -49,6 +50,7 @@ export default function HomeScreen({ navigation }) {
       />
       <Button title="generate tips" onPress={handlePress} />
       <Text style={styles.response}>{response}</Text>
+
     </SafeAreaView>
   );
 }
