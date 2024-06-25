@@ -6,7 +6,7 @@ from tensorflow.keras.models import load_model
 import numpy as np
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./build', static_url_path='/')
 
 
 @app.route("/")
