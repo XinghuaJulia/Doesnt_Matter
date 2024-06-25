@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify
 import os
 import base64
@@ -36,4 +37,6 @@ def upload():
 
 
 if __name__ == '__main__':
-    app.run(host= "172.19.163.15", port= 5000, debug=True)
+    app.run(port=5000, debug=True)
+    
+#host= "172.19.163.15", port= 5000,
