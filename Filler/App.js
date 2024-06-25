@@ -16,11 +16,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Upload Trash" component={TrashUploadScreen} />
         <Stack.Screen name="Virtual Pet" component={GameScreen} />
-        <Stack.Screen name="Account" component={Account} />
         <Stack.Screen name="News" component={NewsScreen} />
       </Stack.Navigator>
     </NavigationContainer>

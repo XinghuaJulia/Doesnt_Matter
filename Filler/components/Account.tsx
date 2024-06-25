@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { StyleSheet, View, Alert, Text } from 'react-native'
+import { StyleSheet, View, Alert, Text, ScrollView } from 'react-native'
 import { Button, Input } from '@rneui/themed'
 import { Session } from '@supabase/supabase-js'
 import Avatar from './Avatar'
-import { FlashList } from '@shopify/flash-list'
 import { useNavigation } from '@react-navigation/native'
 import { daysAgo, pointsThisWeek, pointsToday } from './utils/helper'
 
@@ -32,6 +31,7 @@ export default function Account({ session }: { session: Session }) {
     const {data, error} = await supabase.from('profiles').select('id');
     if (error) console.log(error?.message);
     setUsers(data ?? []);
+    console.log("getAllUsers called")
   }
 
   async function getProfile() {
@@ -41,9 +41,11 @@ export default function Account({ session }: { session: Session }) {
 
       const { data, error, status } = await supabase
         .from('profiles')
-        .select(`username, website, avatar_url, points, last_acitivity, points_week`)
+        .select(`username, website, avatar_url, points, last_activity, points_week`)
         .eq('id', session?.user.id)
         .single()
+
+      console.log("profile status: " + status)
       
       if (error && status !== 406) {
         throw error
@@ -54,8 +56,10 @@ export default function Account({ session }: { session: Session }) {
         setWebsite(data.website)
         setAvatarUrl(data.avatar_url)
         setPoints(data.points)
-        setActivity(data.last_acitivity)
+        setActivity(data.last_activity)
         setPointsWeek(data.points_week)
+
+        console.log("points: "+data.points+"     points_week: "+data.points_week)
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -63,6 +67,7 @@ export default function Account({ session }: { session: Session }) {
       }
     } finally {
       setLoading(false)
+      console.log("getProfile called")
     }
   }
 
@@ -101,37 +106,6 @@ export default function Account({ session }: { session: Session }) {
     }
   }
 
-  // async function initialisePoints() {
-  //   try {
-  //     const { data, error, status } = await supabase
-  //       .from('profiles')
-  //       .select(`points, last_activity, points_week`)
-  //       .eq('id', session?.user.id)
-  //       .single()
-
-  //     const tempPoints = data.points ? data.points : 0
-  //     const tempPointsWeek = data.points_week ? data.points_week : 0
-
-  //     const updates = {
-  //       id: session?.user.id,
-  //       points: tempPoints,
-  //       points_week: tempPointsWeek,
-  //     }
-
-  //     await supabase.from('profiles').upsert(updates)
-
-  //     if (error) {
-  //       throw error
-  //     }
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       Alert.alert(error.message)
-  //     }
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
-
   async function updatePoints() {
     try {
 
@@ -141,8 +115,8 @@ export default function Account({ session }: { session: Session }) {
         .eq('id', session?.user.id)
         .single()
 
-      const tempPoints = pointsToday(data.last_activity, data.points ? data.points : 0) + 1
-      const tempPointsWeek = pointsThisWeek(data.last_activity, data.points_week ? data.points_week : 0) + 1
+      const tempPoints = pointsToday(data.last_activity ? data.last_activity : new Date(), data.points ? data.points : 0) + 1
+      const tempPointsWeek = pointsThisWeek(data.last_activity ? data.last_activity : new Date(), data.points_week ? data.points_week : 0) + 1
 
       const updates = {
         id: session?.user.id,
@@ -171,7 +145,7 @@ export default function Account({ session }: { session: Session }) {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
 
       <View>
         <Avatar
@@ -216,7 +190,11 @@ export default function Account({ session }: { session: Session }) {
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View>
 
-    </View>
+      <Button title="Go to News" onPress={() => navigation.navigate("News")} />
+      <Button title="Go to upload trash screen" onPress={() => navigation.navigate("Upload Trash")} />
+      <Button title="Go to virtual pet screen" onPress={() => navigation.navigate("Virtual Pet")} />
+
+    </ScrollView>
   )
 }
 
