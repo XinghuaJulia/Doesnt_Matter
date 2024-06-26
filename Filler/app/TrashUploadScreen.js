@@ -4,6 +4,8 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import axios, { AxiosHeaders } from 'axios';
 
+import { COLORS } from '../constants/theme'
+
 
 export default function TrashUploadScreen( {navigation} ) {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -104,11 +106,11 @@ const uploadImage = async (imageUri) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>Upload your trashy images here</Text>
-      <Button title="Choose a photo" onPress={pickImageAsync} />
+      <Text style={styles.text}>Upload trash here</Text>
+      <Button title="Choose a photo" color={COLORS.button} onPress={pickImageAsync} />
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       {selectedImage && (
-        <ImageBackground source={{ uri: selectedImage }} style={styles.image}>
+        <Image source={{ uri: selectedImage }} style={styles.image}>
           {predictions && predictions.map((prediction, index) => (
             <View key={index} style={{
               borderWidth: 2,
@@ -122,7 +124,7 @@ const uploadImage = async (imageUri) => {
               <Text style={styles.predictionText}>{`${prediction.class} ${Math.round(prediction.confidence * 100)}%`}</Text>
             </View>
           ))}
-        </ImageBackground>
+        </Image>
       )}
       <Text>{text}</Text>
     </SafeAreaView>
@@ -132,7 +134,6 @@ const uploadImage = async (imageUri) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -141,11 +142,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   image: {
-    height: 400,
-    width: 400,
+    height: 300,
+    width: 300,
     marginTop: 20,
     justifyContent: 'center',
     position: 'relative',
+    borderWidth: 3,
+    borderColor: COLORS.button,
+    borderRadius: 20,
   },
   predictionText: {
     color: 'white',

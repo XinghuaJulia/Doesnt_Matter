@@ -56,7 +56,6 @@ export default function HomeScreen() {
                               item = {item}
                             />
                         )}
-                        keyExtractor={item => item?.news_id}
                         contentContainerStyle={{ columnGap: SIZES.large }}
                     />
                 )}
