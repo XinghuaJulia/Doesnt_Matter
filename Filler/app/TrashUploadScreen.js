@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, View, Text, StyleSheet, SafeAreaView, Image, Alert, ActivityIndicator, ImageBackground, Platform } from 'react-native';
+import { Button, View, Text, StyleSheet, SafeAreaView, Image, Alert, ActivityIndicator, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import axios, { AxiosHeaders } from 'axios';
+
+import { COLORS } from '../constants/theme'
+import { supabase } from '../lib/supabase';
+
 
 
 export default function TrashUploadScreen( {navigation} ) {
@@ -12,8 +16,6 @@ export default function TrashUploadScreen( {navigation} ) {
   const [text, setText] = useState('');
 
   
-
-
   useEffect(() => {
     getPermissionAsync();
   }, []);
@@ -56,41 +58,15 @@ const uploadImage = async (imageUri) => {
   }
   setLoading(true);
   try {
-    const apiURL = `BACKEND SERVER IP ADDRESS`;
-
     const base64ImageData = await FileSystem.readAsStringAsync(imageUri, {
       encoding: FileSystem.EncodingType.Base64,
     });
 
-    // const requestData = {
-    //   requests: [
-    //     {
-    //       image: base64ImageData
-    //     }
-    //   ]
-    // };
 
-    // console.log(axios.get(apiURL));
+    const response = await supabase.rpc('generate_image', {base64imagedata: base64ImageData});
 
-    //const headers = new AxiosHeaders({'image': base64ImageData});
-    //console.log(headers.get('image'));
-
-    // const apiResponse2 = await axios.post(apiURL, {
-    //   image: "hello world"
-    // });
-
-
-    // const apiResponse = await fetch(apiURL, {
-    //   method: 'POST',
-    //   body: JSON.stringify({
-    //     image: base64ImageData
-    //   })
-    // })
-
-    console.log(await fetch('apiURL', {
-      method: 'GET'
-    }));
-    //fetch request cannot be sent to somewhere insecure
+    setText(response.data.responses[0].labelAnnotations[0].description)
+    console.log(response.data.responses[0].labelAnnotations[0].description)
 
   } catch (error) {
     console.error('Error during the image upload process:', error.response ? JSON.stringify(error.response.data) : error.message);
@@ -104,11 +80,11 @@ const uploadImage = async (imageUri) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>Upload your trashy images here</Text>
-      <Button title="Choose a photo" onPress={pickImageAsync} />
+      <Text style={styles.text}>Upload trash here</Text>
+      <Button title="Choose a photo" color={COLORS.button} onPress={pickImageAsync} />
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       {selectedImage && (
-        <ImageBackground source={{ uri: selectedImage }} style={styles.image}>
+        <Image source={{ uri: selectedImage }} style={styles.image}>
           {predictions && predictions.map((prediction, index) => (
             <View key={index} style={{
               borderWidth: 2,
@@ -122,7 +98,7 @@ const uploadImage = async (imageUri) => {
               <Text style={styles.predictionText}>{`${prediction.class} ${Math.round(prediction.confidence * 100)}%`}</Text>
             </View>
           ))}
-        </ImageBackground>
+        </Image>
       )}
       <Text>{text}</Text>
     </SafeAreaView>
@@ -132,7 +108,6 @@ const uploadImage = async (imageUri) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -141,11 +116,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   image: {
-    height: 400,
-    width: 400,
+    height: 300,
+    width: 300,
     marginTop: 20,
     justifyContent: 'center',
     position: 'relative',
+    borderWidth: 3,
+    borderColor: COLORS.button,
+    borderRadius: 20,
   },
   predictionText: {
     color: 'white',

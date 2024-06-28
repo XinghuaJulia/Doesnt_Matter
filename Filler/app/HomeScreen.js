@@ -20,12 +20,12 @@ export default function HomeScreen({ navigation }) {
         if (recyclableStatus.toLowerCase().includes("yes")) {
           console.log("item can be recycled");
 
-          const result = await supabase.rpc('generate_text', {description: 'How to clean ' + text + 'so that it is fit for recycling, keep    response under 100 characters.'});
+          const result = await supabase.rpc('generate_text', {description: 'How to clean ' + text + 'so that it is fit for recycling, keep response under 100 characters.'});
 
           console.log(result);
           setResponse(result.data.choices[0].message.content);
         } else {
-          setResponse("Item not even recyclable. Go put yourself into the bin to make the environemtn clean.");
+          setResponse("Item not recyclable");
         }
     } catch (error) {
       console.error(error);
@@ -41,14 +41,14 @@ export default function HomeScreen({ navigation }) {
       <Button title="Go to virtual pet screen" onPress={() => navigation.navigate("Virtual Pet")} />
 
 
-      <Text style={styles.text}> Input the trash you want to be, not the trash you are.</Text>
+      <Text style={styles.text}>Input the trash</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter the trash. NOW."
         value={text}
         onChangeText={setText}
       />
-      <Button title="generate tips" onPress={handlePress} />
+      <Button title="Generate tips" onPress={handlePress} />
       <Text style={styles.response}>{response}</Text>
 
     </SafeAreaView>
