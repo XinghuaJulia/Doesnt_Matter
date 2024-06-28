@@ -2,23 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { Button, View, Text, StyleSheet, SafeAreaView, Image, Alert, ActivityIndicator, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
-import axios, { AxiosHeaders } from 'axios';
 
 import { COLORS } from '../constants/theme'
 import { supabase } from '../lib/supabase';
+import { Session } from '@supabase/supabase-js'
+
+import { daysAgo, pointsThisWeek, pointsToday } from '../components/utils/helper'
 
 
 
-export default function TrashUploadScreen( {navigation} ) {
+export default function TrashUploadScreen( {route} ) {
+  const { session } : { session: Session } = route.params
+
+  const [username, setUsername] = useState('')
+  const [users, setUsers] = useState<{id: string}[]>([])
+  const [points, setPoints] = useState(0)
+  const [points_week, setPointsWeek] = useState(0)
+  const [activity, setActivity] = useState("You haven't earned any points yet, start today!")
+
+
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [predictions, setPredictions] = useState(null);
   const [text, setText] = useState('');
+  const [tips, setTips] = useState('Please scan trash for tips!')
 
   
   useEffect(() => {
     getPermissionAsync();
-  }, []);
+    if (session) getProfile();
+    // if (session) getAllUsers();
+  }, [session]);
 
   const getPermissionAsync = async () => {
     if (Platform.OS !== 'web') {
@@ -73,9 +88,116 @@ const uploadImage = async (imageUri) => {
     Alert.alert('Error', 'Failed to upload image and get predictions: ' + (error.response ? error.response.data.error : error.message));
   } finally {
     setLoading(false);
+    updatePoints();
   }
 };
 
+const handlePress = async () => {
+  try {
+    if (!text) {
+      alert("You must upload an image first to generate tips")
+    } else {
+      const recyclable = await supabase.rpc('generate_text', {description: 'Is ' + text +' generally fit for recycling, answer only using yes or no.'});
+      console.log(recyclable)
+      const recyclableStatus = JSON.stringify(recyclable.data.choices[0].message.content);
+
+      console.log(recyclableStatus.toLowerCase() + recyclableStatus.toLowerCase().includes("yes"));
+
+        if (recyclableStatus.toLowerCase().includes("yes")) {
+          console.log("item can be recycled");
+
+          const result = await supabase.rpc('generate_text', {description: 'How to clean ' + text + 'so that it is fit for recycling, keep response under 100 characters.'});
+
+          console.log(result);
+          setResponse(result.data.choices[0].message.content);
+        } else {
+          setResponse("Item not recyclable");
+        }
+      }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+async function getAllUsers() {
+  const {data, error} = await supabase.from('profiles').select('id');
+  if (error) console.log(error?.message);
+  setUsers(data ?? []);
+  console.log("getAllUsers called")
+}
+
+async function getProfile() {
+  try {
+    setLoading(true)
+    if (!session?.user) throw new Error('No user on the session!')
+
+    const { data, error, status } = await supabase
+      .from('profiles')
+      .select(`username, points, last_activity, points_week`)
+      .eq('id', session?.user.id)
+      .single()
+    
+    if (error && status !== 406) {
+      throw error
+    }
+
+    if (data) {
+      setUsername(data.username)
+      setPoints(data.points)
+      setActivity(data.last_activity)
+      setPointsWeek(data.points_week)
+
+      console.log("points: "+data.points+"     points_week: "+data.points_week)
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      Alert.alert(error.message)
+    }
+  } finally {
+    setLoading(false)
+    console.log("getProfile called")
+  }
+}
+
+
+async function updatePoints() {
+  try {
+
+    const { data, error, status } = await supabase
+      .from('profiles')
+      .select(`points, last_activity, points_week`)
+      .eq('id', session?.user.id)
+      .single()
+
+    const tempPoints = pointsToday(data.last_activity ? data.last_activity : new Date(), data.points ? data.points : 0) + 1
+    const tempPointsWeek = pointsThisWeek(data.last_activity ? data.last_activity : new Date(), data.points_week ? data.points_week : 0) + 1
+
+    const updates = {
+      id: session?.user.id,
+      points: tempPoints,
+      points_week: tempPointsWeek,
+      last_activity: new Date(),
+    }
+
+    await supabase.from('profiles').upsert(updates)
+
+
+    setPoints(tempPoints)
+    setPointsWeek(tempPointsWeek)
+    setActivity(daysAgo(data.last_activity))
+
+    if (error) {
+      throw error
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      Alert.alert(error.message)
+    }
+  } finally {
+    setLoading(false)
+  }
+}
 
 
   return (
@@ -100,7 +222,12 @@ const uploadImage = async (imageUri) => {
           ))}
         </Image>
       )}
-      <Text>{text}</Text>
+      <Text>{ text }</Text>
+      <Button title="Generate tips"color={COLORS.button} onPress={handlePress} />
+      <Text>Tips: { tips }</Text>
+      <Text>Your points today: {points || 0}</Text>
+      <Text>Your points this week: {points_week || 0}</Text>
+      <Text>Last activity: {activity}</Text>
     </SafeAreaView>
   );
 }

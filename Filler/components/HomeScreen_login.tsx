@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { StyleSheet, View, Alert, Text, Image, TouchableOpacity } from 'react-native'
-import { Button, Input } from '@rneui/themed'
+import { Button } from '@rneui/themed'
 import { Session } from '@supabase/supabase-js'
-import Avatar from './Avatar'
 import { useNavigation } from '@react-navigation/native'
 import { daysAgo, pointsThisWeek, pointsToday } from './utils/helper'
 
@@ -177,11 +176,15 @@ export default function HomeScreen_login({ session }: { session: Session }) {
             <Image source={ homeIcon } style= { styles.icon }/>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Upload Trash")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Upload Trash", {
+            session: session
+          })}>
             <Image source={ trashIcon } style= { styles.icon }/>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate("News")}>
+          <TouchableOpacity onPress={() => navigation.navigate("News", {
+            session: session
+          })}>
             <Image source={ newsIcon } style= { styles.icon }/>
           </TouchableOpacity>
 
