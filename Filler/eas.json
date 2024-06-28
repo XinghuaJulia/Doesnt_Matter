@@ -13,7 +13,12 @@
       "channel": "preview",
       "android": {
         "buildType": "apk"
-    }}
+    }},
+    "preview2": {
+      "android": {
+        "buildType": "apk"
+      }
+    }
 
   },
   "submit": {

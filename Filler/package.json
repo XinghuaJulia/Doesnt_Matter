@@ -17,8 +17,6 @@
     "@rneui/themed": "^4.0.0-rc.8",
     "@shopify/flash-list": "1.6.4",
     "@supabase/supabase-js": "^2.43.5",
-    "@tensorflow/tfjs": "^4.20.0",
-    "@tensorflow/tfjs-react-native": "^1.0.0",
     "axios": "^1.7.2",
     "curl": "^0.1.4",
     "dayjs": "^1.11.11",
