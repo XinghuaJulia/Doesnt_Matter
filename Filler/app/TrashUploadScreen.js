@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, View, Text, StyleSheet, SafeAreaView, Image, Alert, ActivityIndicator, ImageBackground, Platform } from 'react-native';
+import { Button, View, Text, StyleSheet, SafeAreaView, Image, Alert, ActivityIndicator, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import axios, { AxiosHeaders } from 'axios';
 
 import { COLORS } from '../constants/theme'
+import { supabase } from '../lib/supabase';
+
 
 
 export default function TrashUploadScreen( {navigation} ) {
@@ -14,8 +16,6 @@ export default function TrashUploadScreen( {navigation} ) {
   const [text, setText] = useState('');
 
   
-
-
   useEffect(() => {
     getPermissionAsync();
   }, []);
@@ -58,41 +58,15 @@ const uploadImage = async (imageUri) => {
   }
   setLoading(true);
   try {
-    const apiURL = `BACKEND SERVER IP ADDRESS`;
-
     const base64ImageData = await FileSystem.readAsStringAsync(imageUri, {
       encoding: FileSystem.EncodingType.Base64,
     });
 
-    // const requestData = {
-    //   requests: [
-    //     {
-    //       image: base64ImageData
-    //     }
-    //   ]
-    // };
 
-    // console.log(axios.get(apiURL));
+    const response = await supabase.rpc('generate_image', {base64imagedata: base64ImageData});
 
-    //const headers = new AxiosHeaders({'image': base64ImageData});
-    //console.log(headers.get('image'));
-
-    // const apiResponse2 = await axios.post(apiURL, {
-    //   image: "hello world"
-    // });
-
-
-    // const apiResponse = await fetch(apiURL, {
-    //   method: 'POST',
-    //   body: JSON.stringify({
-    //     image: base64ImageData
-    //   })
-    // })
-
-    console.log(await fetch('apiURL', {
-      method: 'GET'
-    }));
-    //fetch request cannot be sent to somewhere insecure
+    setText(response.data.responses[0].labelAnnotations[0].description)
+    console.log(response.data.responses[0].labelAnnotations[0].description)
 
   } catch (error) {
     console.error('Error during the image upload process:', error.response ? JSON.stringify(error.response.data) : error.message);
