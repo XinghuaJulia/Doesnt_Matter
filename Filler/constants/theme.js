@@ -8,6 +8,9 @@ const COLORS = {
   
     white: "#F3F4F8",
     lightWhite: "#FAFAFC",
+
+    background: "#fefee7",
+    button: "#78ac64"
   };
   
   const SIZES = {

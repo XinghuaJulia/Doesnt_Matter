@@ -3,6 +3,8 @@ import { supabase } from '../lib/supabase'
 import { StyleSheet, View, Alert, Image, Button } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 
+import { COLORS } from '../constants/theme'
+
 interface Props {
   size: number
   url: string | null
@@ -102,6 +104,7 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
       <View>
         <Button
           title={uploading ? 'Uploading ...' : 'Upload'}
+          color={COLORS.button}
           onPress={uploadAvatar}
           disabled={uploading}
         />
@@ -112,7 +115,7 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
 
 const styles = StyleSheet.create({
   avatar: {
-    borderRadius: 5,
+    borderRadius: 50,
     overflow: 'hidden',
     maxWidth: '100%',
   },
@@ -125,6 +128,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: 'rgb(200, 200, 200)',
-    borderRadius: 5,
+    borderRadius: 50,
   },
 })

@@ -4,6 +4,7 @@ import base64
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import numpy as np
+import json
 
 
 app = Flask(__name__)
@@ -17,12 +18,14 @@ def home():
 def upload():
     file = request.get_data('image')
 
-    
-    #data = file.stream.read()
-    data = base64.b64encode(file).decode()   
+    processed = json.loads(file)["image"]
 
-    # Load the image to predict
-    img = tf.image.resize(data, (256,256))
+    # data = base64.b64decode(processed).decode('utf-8')
+
+    data = base64.b64decode(processed).decode('utf-8')
+
+    # # Load the image to predict
+    img = tf.image.resfile(data, (256,256))
     x = data.img_to_array(img)
 
 
@@ -35,5 +38,6 @@ def upload():
     return prediction
 
 
+
 if __name__ == '__main__':
-    app.run(host= "172.19.163.15", port= 5000, debug=True)
+    app.run(debug=True)
