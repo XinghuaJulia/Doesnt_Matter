@@ -46,7 +46,6 @@ export default function Account({ route }) {
         .eq('id', session?.user.id)
         .single()
 
-      console.log("profile status: " + status)
       
       if (error && status !== 406) {
         throw error
