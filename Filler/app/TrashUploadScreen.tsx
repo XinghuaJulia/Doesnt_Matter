@@ -109,9 +109,9 @@ const handlePress = async () => {
           const result = await supabase.rpc('generate_text', {description: 'How to clean ' + text + 'so that it is fit for recycling, keep response under 100 characters.'});
 
           console.log(result);
-          setResponse(result.data.choices[0].message.content);
+          setTips(result.data.choices[0].message.content);
         } else {
-          setResponse("Item not recyclable");
+          setTips("Item not recyclable");
         }
       }
   } catch (error) {
