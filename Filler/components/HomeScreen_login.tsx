@@ -134,6 +134,24 @@ export default function HomeScreen_login({ session }: { session: Session }) {
     }
   }
 
+  const handlePress = async () => {
+    try {
+      const request = new Request('http://172.19.163.15:3000/', {
+        method: "POST",
+        body: JSON.stringify({image: "aSB3YW50IHRvIGRpZQ=="}),
+      });
+
+      const response = await fetch(request)
+
+      console.log(response)
+
+      console.log(await fetch("http://172.19.163.15:3000/"))
+    }
+    catch (error) {
+      console.error('Error during the image upload process:', error.response ? JSON.stringify(error.response.data) : error.message);
+    } 
+  }
+
   return (
     <View style={styles.container}>
 
@@ -196,7 +214,7 @@ export default function HomeScreen_login({ session }: { session: Session }) {
         </View>
       </View>
       
-
+      <Button title={"testing"} onPress={handlePress}/>
 
     </View>
   )

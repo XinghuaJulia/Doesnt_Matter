@@ -6,8 +6,12 @@ from tensorflow.keras.models import load_model
 import numpy as np
 import json
 
+from flask_cors import CORS, cross_origin
+
 
 app = Flask(__name__)
+
+CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 @app.route("/")
@@ -25,19 +29,20 @@ def upload():
     data = base64.b64decode(processed).decode('utf-8')
 
     # # Load the image to predict
-    img = tf.image.resfile(data, (256,256))
-    x = data.img_to_array(img)
+    # img = tf.image.resfile(data, (256,256))
+    # x = data.img_to_array(img)
 
 
 
-    loaded_model = load_model(os.path.join('./models/trashclassifier.keras','trashclassifier.keras'))
+    # loaded_model = load_model(os.path.join('./models','trashclassifier.keras'))
 
     # Make the prediction
-    prediction = loaded_model.predict(np.expand_dims(x/255, 0))
+    # prediction = loaded_model.predict(np.expand_dims(x/255, 0))
         
-    return prediction
+    # return prediction
+    return jsonify({"message": data})
 
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=3000,debug=True)
