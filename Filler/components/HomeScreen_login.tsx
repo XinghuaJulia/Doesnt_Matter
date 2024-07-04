@@ -136,19 +136,16 @@ export default function HomeScreen_login({ session }: { session: Session }) {
 
   const handlePress = async () => {
     try {
-      const request = new Request('http://172.19.163.15:3000/', {
-        method: "POST",
-        body: JSON.stringify({image: "aSB3YW50IHRvIGRpZQ=="}),
-      });
+      const request = new Request('http://172.19.163.15:3000/');
 
       const response = await fetch(request)
 
-      console.log(response)
+      const json = await response.json()
 
-      console.log(await fetch("http://172.19.163.15:3000/"))
+      console.log(json)
     }
     catch (error) {
-      console.error('Error during the image upload process:', error.response ? JSON.stringify(error.response.data) : error.message);
+      console.error('Error:', error.response ? JSON.stringify(error.response.data) : error.message);
     } 
   }
 

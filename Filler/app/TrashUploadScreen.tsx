@@ -78,10 +78,27 @@ const uploadImage = async (imageUri) => {
     });
 
 
-    const response = await supabase.rpc('generate_image', {base64imagedata: base64ImageData});
+    // const response = await supabase.rpc('generate_image', {base64imagedata: base64ImageData});
 
-    setText(response.data.responses[0].labelAnnotations[0].description)
-    console.log(response.data.responses[0].labelAnnotations[0].description)
+    // setText(response.data.responses[0].labelAnnotations[0].description)
+    // console.log(response.data.responses[0].labelAnnotations[0].description)
+
+
+
+
+    const request = new Request('http://172.19.171.134:3000/', {
+      method: "POST",
+      body: JSON.stringify({image: base64ImageData}),
+    });
+
+    const responsetest = await fetch(request)
+
+    console.log("processing img data at backend")
+
+    const json = await responsetest.json()
+
+    setText(json.message)
+    console.log(json.message)
 
   } catch (error) {
     console.error('Error during the image upload process:', error.response ? JSON.stringify(error.response.data) : error.message);
