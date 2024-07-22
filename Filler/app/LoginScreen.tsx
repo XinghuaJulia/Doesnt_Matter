@@ -1,11 +1,14 @@
-import 'react-native-url-polyfill/auto'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { supabase } from '../lib/supabase'
 import Auth from '../components/Auth'
 import Account from '../components/Account'
 import { View, Button } from 'react-native'
 import { Session } from '@supabase/supabase-js'
 import HomeScreen_login from '../components/HomeScreen_login'
+
+import Tabs from '../components/Tabs'
+
+import UserProfile from '../components/UserProfile'
 
 export default function LoginScreen({ navigation }) {
   const [session, setSession] = useState<Session | null>(null)
@@ -17,18 +20,10 @@ export default function LoginScreen({ navigation }) {
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
-    })
+    }) 
   }, [])
 
   return (
-    <View>
-      {session && session.user ? <HomeScreen_login key={session.user.id} session={session}/> : <Auth />}
-    </View>
+    session && session.user ? <Tabs session={session}/> : <Auth />
   )
-  
-  // return (
-  //   <View>
-  //     {session && session.user ? navigation.navigate("Home") : <Auth />}
-  //   </View>
-  // )
 }

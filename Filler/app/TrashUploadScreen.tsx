@@ -11,8 +11,8 @@ import { daysAgo, pointsThisWeek, pointsToday } from '../components/utils/helper
 
 
 
-export default function TrashUploadScreen( {route} ) {
-  const { session } : { session: Session } = route.params
+export default function TrashUploadScreen() {
+
 
   const [username, setUsername] = useState('')
   const [users, setUsers] = useState<{id: string}[]>([])
@@ -28,12 +28,21 @@ export default function TrashUploadScreen( {route} ) {
   const [text, setText] = useState('');
   const [tips, setTips] = useState('Please scan trash for tips!')
 
+  const [session, setSession] = useState<Session | null>(null)
+
   
   useEffect(() => {
     getPermissionAsync();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    }) 
+    
     if (session) getProfile();
-    // if (session) getAllUsers();
-  }, [session]);
+  }, []);
 
   const getPermissionAsync = async () => {
     if (Platform.OS !== 'web') {

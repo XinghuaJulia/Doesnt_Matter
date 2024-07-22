@@ -10,8 +10,12 @@ import { COLORS } from '../constants/theme'
 
 
 export default function Account({ route }) {
-  const { session } : { session: Session } = route.params
+  const { session } = route.params
 
+  useEffect(() => {
+    if (session) getProfile();
+    if (session) getAllUsers();
+  }, [session])
 
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState('')
@@ -23,10 +27,7 @@ export default function Account({ route }) {
   const [activity, setActivity] = useState("You haven't earned any points yet, start today!")
 
 
-  useEffect(() => {
-    if (session) getProfile();
-    if (session) getAllUsers();
-  }, [session])
+  
 
   async function getAllUsers() {
     const {data, error} = await supabase.from('profiles').select('id');
@@ -106,48 +107,11 @@ export default function Account({ route }) {
     }
   }
 
-  async function updatePoints() {
-    try {
-
-      const { data, error, status } = await supabase
-        .from('profiles')
-        .select(`points, last_activity, points_week`)
-        .eq('id', session?.user.id)
-        .single()
-
-      const tempPoints = pointsToday(data.last_activity ? data.last_activity : new Date(), data.points ? data.points : 0) + 1
-      const tempPointsWeek = pointsThisWeek(data.last_activity ? data.last_activity : new Date(), data.points_week ? data.points_week : 0) + 1
-
-      const updates = {
-        id: session?.user.id,
-        points: tempPoints,
-        points_week: tempPointsWeek,
-        last_activity: new Date(),
-      }
-
-      await supabase.from('profiles').upsert(updates)
-
-
-      setPoints(tempPoints)
-      setPointsWeek(tempPointsWeek)
-      setActivity(daysAgo(data.last_activity))
-
-      if (error) {
-        throw error
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <ScrollView style={styles.container}>
 
-      <View>
+      <View style={{alignContent:"center", alignItems:"center"}}>
         <Avatar
             size={ 100 }
             url={avatarUrl}

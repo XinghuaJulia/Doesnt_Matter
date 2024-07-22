@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { Session } from '@supabase/supabase-js'
 import { StyleSheet, View, Alert, Text, Image, TouchableOpacity } from 'react-native'
 import { Button } from '@rneui/themed'
-import { Session } from '@supabase/supabase-js'
-import { useNavigation } from '@react-navigation/native'
+import { NavigationContainer, useNavigation } from '@react-navigation/native'
+
 import { daysAgo, pointsThisWeek, pointsToday } from './utils/helper'
 
 import { COLORS } from '../constants/theme'
-const homeIcon = require('../assets/icons/home.png')
-const profileIcon = require('../assets/icons/user.png')
-const trashIcon = require('../assets/icons/trash.png')
-const newsIcon = require('../assets/icons/newspaper.png')
 
 
 
-export default function HomeScreen_login({ session }: { session: Session }) {
+
+ 
+export default function HomeScreen_login({ route }) {
+  const { session } = route.params
+
+
+  useEffect(() => {
+    if (session) getProfile();
+    if (session) getAllUsers();    
+    if (!session) supabase.auth.signOut();
+  }, [])
+
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
@@ -25,11 +33,6 @@ export default function HomeScreen_login({ session }: { session: Session }) {
 
   const navigation = useNavigation()
 
-  useEffect(() => {
-    if (session) getProfile();
-    if (session) getAllUsers();
-    if (!session) supabase.auth.signOut();
-  }, [session])
 
   async function getAllUsers() {
     const {data, error} = await supabase.from('profiles').select('id');
@@ -160,6 +163,7 @@ export default function HomeScreen_login({ session }: { session: Session }) {
         )}
       </View>
 
+
       <View>
         <Text style={ styles.title }>{username} </Text>
       </View>
@@ -175,16 +179,17 @@ export default function HomeScreen_login({ session }: { session: Session }) {
       <Text>Your points today: {points || 0}</Text>
       <Text>Your points this week: {points_week || 0}</Text>
       <Text>Last activity: {activity}</Text>
+      
+
 
       <Button title="Go to virtual pet screen" color={COLORS.button} onPress={() => navigation.navigate("Virtual Pet")} />
-
-      
 
       <View style={styles.verticallySpaced}>
         <Button title="Sign Out" color={COLORS.button} onPress={() => supabase.auth.signOut()} />
       </View>
 
-
+        
+      {/* 
       <View>
         <View style={ styles.bottomTabs }>
           <TouchableOpacity>
@@ -210,9 +215,17 @@ export default function HomeScreen_login({ session }: { session: Session }) {
           </TouchableOpacity>
         </View>
       </View>
-      
-      <Button title={"testing"} onPress={handlePress}/>
 
+      temporarily testing bottom tab
+      removed route.params requirements
+      */}
+      
+      
+      {/*
+
+      <Button title={"testing"} onPress={handlePress}/>
+      
+      */}
     </View>
   )
 }
