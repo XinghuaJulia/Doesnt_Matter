@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { Session } from '@supabase/supabase-js'
 import { StyleSheet, View, Alert, Text, Image, TouchableOpacity } from 'react-native'
 import { Button } from '@rneui/themed'
-import { useNavigation } from '@react-navigation/native'
+
 
 import { daysAgo, pointsThisWeek, pointsToday } from './utils/helper'
 
@@ -22,13 +22,12 @@ export default function HomeScreen_login({ route }) {
   const { session } = route.params
 
   useEffect(() => {
-    if (session) getProfile();
-    if (session) getAllUsers();    
+    if (session) getProfile();  
     if (!session) supabase.auth.signOut();
   }, [])
 
   const [loading, setLoading] = useState(true)
-  const [username, setUsername] = useState('')
+  const [username, setUsername] = useState("Don't have a username... Create one now!")
   const [avatarUrl, setAvatarUrl] = useState('')
   const [users, setUsers] = useState<{id: string}[]>([])
   const [points, setPoints] = useState(0)
@@ -36,7 +35,6 @@ export default function HomeScreen_login({ route }) {
   const [activity, setActivity] = useState("You haven't earned any points yet, start today!")
   const [petName, setPetName] = useState('Turtle')
 
-  const navigation = useNavigation()
 
 
   async function getAllUsers() {
@@ -175,7 +173,7 @@ export default function HomeScreen_login({ route }) {
             <View style={[ styles.avatar, styles.icon ]} />
           )}
           <View>
-            <Text style={ styles.title }>{username || "No username... create one now!"} </Text>
+            <Text style={ styles.title }>{username} </Text>
             <Text>Last activity: {activity}</Text>
           </View>
         </View>

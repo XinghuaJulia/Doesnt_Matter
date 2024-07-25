@@ -57,7 +57,7 @@ export default function Account({ route }) {
         setPetName(data.pet_name)
         setAvatarUrl(data.avatar_url)
         setPoints(data.points)
-        setActivity(data.last_activity)
+        setActivity(daysAgo(data.last_activity))
         setPointsWeek(data.points_week)
 
         console.log("points: "+data.points+"     points_week: "+data.points_week)
@@ -84,19 +84,19 @@ export default function Account({ route }) {
     try {
       setLoading(true)
       if (!session?.user) throw new Error('No user on the session!')
+      if (username.length > 20) Alert.alert('Username cannot bet longer than 20 characters!')
+      if (petName.length > 20) Alert.alert('Pet name cannot be longer than 20 characters!')
 
-      const updates = {
-        id: session?.user.id,
-        username,
-        petName,
-        avatar_url,
-        updated_at: new Date(),
-      }
+      else {
+        const updates = {
+          id: session?.user.id,
+          username,
+          pet_name: petName,
+          avatar_url,
+          updated_at: new Date(),
+        }
 
-      const { error } = await supabase.from('profiles').upsert(updates)
-
-      if (error) {
-        throw error
+        const { error } = await supabase.from('profiles').upsert(updates)
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -117,7 +117,6 @@ export default function Account({ route }) {
             url={avatarUrl}
             onUpload={(url: string) => {
             setAvatarUrl(url)
-            updateProfile({ username, petName, avatar_url: url })
             }}
         />
       </View>
@@ -131,6 +130,7 @@ export default function Account({ route }) {
         <Input label="Pet Name" value={petName || ''} onChangeText={(text) => setPetName(text)} />
       </View>
 
+      <Text>Last activity: {activity}</Text>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
           title={loading ? 'Loading ...' : 'Update'}
@@ -140,7 +140,7 @@ export default function Account({ route }) {
         />
       </View>
 
-      <Text>Last activity: {activity}</Text>
+      
 
       <View style={styles.verticallySpaced}>
         <Button 
@@ -156,7 +156,6 @@ export default function Account({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
     padding: 12,
   },
   verticallySpaced: {

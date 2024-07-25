@@ -13,6 +13,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerTitle: {
+    flex:1,
+    flexWrap: 'wrap',
     fontSize: SIZES.large,
     color: COLORS.primary,
   },

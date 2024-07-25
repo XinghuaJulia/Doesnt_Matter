@@ -41,12 +41,12 @@ def upload():
     resize = tf.image.resize(img_test, (256,256))
 
 
-    loaded_model = load_model(os.path.join('./models','trashclassifier.h5'))
+    loaded_model = load_model(os.path.join('./models','trashclassifier4.h5'))
 
     arr = loaded_model.predict(np.expand_dims(resize/255, 0))
 
     yhat_list = arr.tolist()[0]
-    max_index = yhat_list.index(max(yhat_list))
+    max_index = yhat_list.index(max(yhat_list))D
 
     result = 'cigarette'
 

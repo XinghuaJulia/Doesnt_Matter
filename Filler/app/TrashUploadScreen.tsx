@@ -13,15 +13,6 @@ import { daysAgo, pointsThisWeek, pointsToday } from '../components/utils/helper
 
 export default function TrashUploadScreen() {
 
-
-  const [username, setUsername] = useState('')
-  const [users, setUsers] = useState<{id: string}[]>([])
-  const [points, setPoints] = useState(0)
-  const [points_week, setPointsWeek] = useState(0)
-  const [activity, setActivity] = useState("You haven't earned any points yet, start today!")
-
-
-
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [predictions, setPredictions] = useState(null);
@@ -29,20 +20,6 @@ export default function TrashUploadScreen() {
   const [tips, setTips] = useState('Please scan trash for tips!')
 
   const [session, setSession] = useState<Session | null>(null)
-
-  
-  useEffect(() => {
-    getPermissionAsync();
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    }) 
-    
-    if (session) getProfile();
-  }, []);
 
   const getPermissionAsync = async () => {
     if (Platform.OS !== 'web') {
@@ -136,53 +113,14 @@ const handlePress = async () => {
 
           console.log(result);
           setTips(result.data.choices[0].message.content);
+
+          updatePoints();
         } else {
           setTips("Item not recyclable");
         }
       }
   } catch (error) {
     console.error(error);
-  }
-}
-
-
-async function getAllUsers() {
-  const {data, error} = await supabase.from('profiles').select('id');
-  if (error) console.log(error?.message);
-  setUsers(data ?? []);
-  console.log("getAllUsers called")
-}
-
-async function getProfile() {
-  try {
-    setLoading(true)
-    if (!session?.user) throw new Error('No user on the session!')
-
-    const { data, error, status } = await supabase
-      .from('profiles')
-      .select(`username, points, last_activity, points_week`)
-      .eq('id', session?.user.id)
-      .single()
-    
-    if (error && status !== 406) {
-      throw error
-    }
-
-    if (data) {
-      setUsername(data.username)
-      setPoints(data.points)
-      setActivity(data.last_activity)
-      setPointsWeek(data.points_week)
-
-      console.log("points: "+data.points+"     points_week: "+data.points_week)
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      Alert.alert(error.message)
-    }
-  } finally {
-    setLoading(false)
-    console.log("getProfile called")
   }
 }
 
@@ -222,6 +160,7 @@ async function updatePoints() {
     }
   } finally {
     setLoading(false)
+    console.log("points updated")
   }
 }
 
@@ -232,28 +171,11 @@ async function updatePoints() {
       <Button title="Choose a photo" color={COLORS.button} onPress={pickImageAsync} />
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       {selectedImage && (
-        <Image source={{ uri: selectedImage }} style={styles.image}>
-          {predictions && predictions.map((prediction, index) => (
-            <View key={index} style={{
-              borderWidth: 2,
-              borderColor: 'red',
-              position: 'absolute',
-              left: prediction.x * 400,
-              top: prediction.y * 400,
-              width: prediction.width * 400,
-              height: prediction.height * 400,
-            }}>
-              <Text style={styles.predictionText}>{`${prediction.class} ${Math.round(prediction.confidence * 100)}%`}</Text>
-            </View>
-          ))}
-        </Image>
+        <Image source={{ uri: selectedImage }} style={styles.image} />
       )}
       <Text>{ text }</Text>
       <Button title="Generate tips"color={COLORS.button} onPress={handlePress} />
       <Text>Tips: { tips }</Text>
-      <Text>Your points today: {points || 0}</Text>
-      <Text>Your points this week: {points_week || 0}</Text>
-      <Text>Last activity: {activity}</Text>
     </SafeAreaView>
   );
 }

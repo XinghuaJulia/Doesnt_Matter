@@ -1,12 +1,8 @@
 import * as React from 'react'
-import { View, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import TrashUploadScreen from './app/TrashUploadScreen'
 import LoginScreen from './app/LoginScreen'
-import GameScreen from './app/GameScreen'
-import NewsScreen from './app/NewsScreen'
-import Account from './components/Account'
+
 
 
 import { COLORS } from './constants/theme'
@@ -22,10 +18,10 @@ export default function App() {
           <Stack.Navigator screenOptions={{
             contentStyle:{
               backgroundColor: COLORS.background,
-            }
+            },
+            headerShown: false,
           }}>
             <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Virtual Pet" component={GameScreen} />
           </Stack.Navigator>
         </NavigationContainer>    
   )
