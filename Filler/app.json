@@ -2,7 +2,7 @@
   "expo": {
     "scheme": "com.supabase",
     "name": "Filler",
-    "slug": "Filler",
+    "slug": "doesnt-matter",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -31,7 +31,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "81b18e98-c531-46ef-b2ed-e54ebbc217b4"
+        "projectId": "6c2b81a9-c5e9-4bf6-bac2-cc8359775d03"
+      },
+      "router": {
+        "origin": false
       }
     },
     "updates": {
@@ -39,6 +42,7 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "owner": "uselesstrash06"
   }
 }

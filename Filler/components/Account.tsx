@@ -10,12 +10,16 @@ import { COLORS } from '../constants/theme'
 
 
 export default function Account({ route }) {
-  const { session } : { session: Session } = route.params
+  const { session } = route.params
 
+  useEffect(() => {
+    if (session) getProfile();
+    if (session) getAllUsers();
+  }, [session])
 
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState('')
-  const [website, setWebsite] = useState('')
+  const [petName, setPetName] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
   const [users, setUsers] = useState<{id: string}[]>([])
   const [points, setPoints] = useState(0)
@@ -23,10 +27,7 @@ export default function Account({ route }) {
   const [activity, setActivity] = useState("You haven't earned any points yet, start today!")
 
 
-  useEffect(() => {
-    if (session) getProfile();
-    if (session) getAllUsers();
-  }, [session])
+  
 
   async function getAllUsers() {
     const {data, error} = await supabase.from('profiles').select('id');
@@ -42,7 +43,7 @@ export default function Account({ route }) {
 
       const { data, error, status } = await supabase
         .from('profiles')
-        .select(`username, website, avatar_url, points, last_activity, points_week`)
+        .select(`username, pet_name, avatar_url, points, last_activity, points_week`)
         .eq('id', session?.user.id)
         .single()
 
@@ -53,10 +54,10 @@ export default function Account({ route }) {
 
       if (data) {
         setUsername(data.username)
-        setWebsite(data.website)
+        setPetName(data.pet_name)
         setAvatarUrl(data.avatar_url)
         setPoints(data.points)
-        setActivity(data.last_activity)
+        setActivity(daysAgo(data.last_activity))
         setPointsWeek(data.points_week)
 
         console.log("points: "+data.points+"     points_week: "+data.points_week)
@@ -73,67 +74,29 @@ export default function Account({ route }) {
 
   async function updateProfile({
     username,
-    website,
+    petName,
     avatar_url,
   }: {
     username: string
-    website: string
+    petName: string
     avatar_url: string
   }) {
     try {
       setLoading(true)
       if (!session?.user) throw new Error('No user on the session!')
+      if (username.length > 20) Alert.alert('Username cannot bet longer than 20 characters!')
+      if (petName.length > 20) Alert.alert('Pet name cannot be longer than 20 characters!')
 
-      const updates = {
-        id: session?.user.id,
-        username,
-        website,
-        avatar_url,
-        updated_at: new Date(),
-      }
+      else {
+        const updates = {
+          id: session?.user.id,
+          username,
+          pet_name: petName,
+          avatar_url,
+          updated_at: new Date(),
+        }
 
-      const { error } = await supabase.from('profiles').upsert(updates)
-
-      if (error) {
-        throw error
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function updatePoints() {
-    try {
-
-      const { data, error, status } = await supabase
-        .from('profiles')
-        .select(`points, last_activity, points_week`)
-        .eq('id', session?.user.id)
-        .single()
-
-      const tempPoints = pointsToday(data.last_activity ? data.last_activity : new Date(), data.points ? data.points : 0) + 1
-      const tempPointsWeek = pointsThisWeek(data.last_activity ? data.last_activity : new Date(), data.points_week ? data.points_week : 0) + 1
-
-      const updates = {
-        id: session?.user.id,
-        points: tempPoints,
-        points_week: tempPointsWeek,
-        last_activity: new Date(),
-      }
-
-      await supabase.from('profiles').upsert(updates)
-
-
-      setPoints(tempPoints)
-      setPointsWeek(tempPointsWeek)
-      setActivity(daysAgo(data.last_activity))
-
-      if (error) {
-        throw error
+        const { error } = await supabase.from('profiles').upsert(updates)
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -143,17 +106,17 @@ export default function Account({ route }) {
       setLoading(false)
     }
   }
+
 
   return (
     <ScrollView style={styles.container}>
 
-      <View>
+      <View style={{alignContent:"center", alignItems:"center"}}>
         <Avatar
             size={ 100 }
             url={avatarUrl}
             onUpload={(url: string) => {
             setAvatarUrl(url)
-            updateProfile({ username, website, avatar_url: url })
             }}
         />
       </View>
@@ -164,19 +127,20 @@ export default function Account({ route }) {
         <Input label="Username" value={username || ''} onChangeText={(text) => setUsername(text)} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Input label="Website" value={website || ''} onChangeText={(text) => setWebsite(text)} />
+        <Input label="Pet Name" value={petName || ''} onChangeText={(text) => setPetName(text)} />
       </View>
 
+      <Text>Last activity: {activity}</Text>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
           title={loading ? 'Loading ...' : 'Update'}
           color={COLORS.button}
-          onPress={() => updateProfile({ username, website, avatar_url: avatarUrl })}
+          onPress={() => updateProfile({ username, petName, avatar_url: avatarUrl })}
           disabled={loading}
         />
       </View>
 
-      <Text>Last activity: {activity}</Text>
+      
 
       <View style={styles.verticallySpaced}>
         <Button 
@@ -192,7 +156,6 @@ export default function Account({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
     padding: 12,
   },
   verticallySpaced: {
