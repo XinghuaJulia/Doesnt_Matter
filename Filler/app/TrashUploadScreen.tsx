@@ -35,7 +35,7 @@ export default function TrashUploadScreen() {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 0.5,
-      size: 0.1
+      size: 0.1,
     });
 
     //console.log("Image picker result:", JSON.stringify(result)); // Log the full result to see what is returned
