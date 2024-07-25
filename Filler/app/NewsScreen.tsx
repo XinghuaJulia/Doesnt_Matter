@@ -25,7 +25,7 @@ export default function NewsScreen({ route }) {
       try {
         const searchField = encodeURI("environment AND sustainable")
   
-        const result = await supabase.rpc('generate_news', {description: 'Is ' +' generally fit for recycling, answer only using yes or no.'});
+        const result = await supabase.rpc('generate_news', {description: "filler"});
   
         setData(result.data.articles);
       } catch (error) {
@@ -46,8 +46,6 @@ export default function NewsScreen({ route }) {
 
   return (
       <View style={styles.headerTitle}>
-          <Text>News Here</Text>
-
           <View style={styles.cardsContainer}>
               {isLoading ? (
                   <ActivityIndicator size= "large" color= {COLORS.primary}/>

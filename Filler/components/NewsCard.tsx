@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, Image, Linking, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Image, Linking, Alert, SafeAreaView } from "react-native";
 import { Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase';
-import { daysAgo, pointsThisWeek, pointsToday } from './utils/helper'
+import { pointsThisWeek, pointsToday, timeFormatDay } from './utils/helper'
 
 import styles from "../constants/NewsCard.style";
 
@@ -48,6 +48,7 @@ const NewsCard = ({ item, session }) => {
     return (
         <TouchableOpacity
             onPress={() => {handlePress()} }
+            style={styles.container}
         >
             <View>
                 <Image 
@@ -56,10 +57,10 @@ const NewsCard = ({ item, session }) => {
                   style= { styles.newsImage }
                   />
             </View>
-            <Text style= {styles.headerTitle}>{ item.title }</Text>
-            <Text>{ item.source.name } { item.publishedAt }</Text>
-
-            
+            <View>
+              <Text style= {styles.headerTitle}>{ item.title }</Text>
+              <Text>{ item.source.name } { timeFormatDay(item.publishedAt) }</Text>
+            </View>
         </TouchableOpacity>
     )
 }

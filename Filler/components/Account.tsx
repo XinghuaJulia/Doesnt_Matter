@@ -19,7 +19,7 @@ export default function Account({ route }) {
 
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState('')
-  const [website, setWebsite] = useState('')
+  const [petName, setPetName] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
   const [users, setUsers] = useState<{id: string}[]>([])
   const [points, setPoints] = useState(0)
@@ -43,7 +43,7 @@ export default function Account({ route }) {
 
       const { data, error, status } = await supabase
         .from('profiles')
-        .select(`username, website, avatar_url, points, last_activity, points_week`)
+        .select(`username, pet_name, avatar_url, points, last_activity, points_week`)
         .eq('id', session?.user.id)
         .single()
 
@@ -54,7 +54,7 @@ export default function Account({ route }) {
 
       if (data) {
         setUsername(data.username)
-        setWebsite(data.website)
+        setPetName(data.pet_name)
         setAvatarUrl(data.avatar_url)
         setPoints(data.points)
         setActivity(data.last_activity)
@@ -74,11 +74,11 @@ export default function Account({ route }) {
 
   async function updateProfile({
     username,
-    website,
+    petName,
     avatar_url,
   }: {
     username: string
-    website: string
+    petName: string
     avatar_url: string
   }) {
     try {
@@ -88,7 +88,7 @@ export default function Account({ route }) {
       const updates = {
         id: session?.user.id,
         username,
-        website,
+        petName,
         avatar_url,
         updated_at: new Date(),
       }
@@ -117,7 +117,7 @@ export default function Account({ route }) {
             url={avatarUrl}
             onUpload={(url: string) => {
             setAvatarUrl(url)
-            updateProfile({ username, website, avatar_url: url })
+            updateProfile({ username, petName, avatar_url: url })
             }}
         />
       </View>
@@ -128,14 +128,14 @@ export default function Account({ route }) {
         <Input label="Username" value={username || ''} onChangeText={(text) => setUsername(text)} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Input label="Website" value={website || ''} onChangeText={(text) => setWebsite(text)} />
+        <Input label="Pet Name" value={petName || ''} onChangeText={(text) => setPetName(text)} />
       </View>
 
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
           title={loading ? 'Loading ...' : 'Update'}
           color={COLORS.button}
-          onPress={() => updateProfile({ username, website, avatar_url: avatarUrl })}
+          onPress={() => updateProfile({ username, petName, avatar_url: avatarUrl })}
           disabled={loading}
         />
       </View>

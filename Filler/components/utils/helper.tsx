@@ -10,10 +10,12 @@ export const timeFormatDay = (time) => {
 
 export const daysAgo = (time) => {
   const timeFormatted = timeFormatDay(time); 
+  console.log("unformatted: " + time)
+  console.log("formatted time: " + timeFormatted)
 
-  return dayjs(new Date()).isSame(timeFormatted, 'day') 
+  return dayjs(new Date()).isSame(time, 'day') 
     ? "Today, " + timeFormatted
-    : dayjs().diff(timeFormatted, 'day') + " days ago, " + timeFormatted;
+    : dayjs().diff(time, 'day') + " days ago, " + timeFormatted;
 } 
 
 export const pointsToday = (time, points: number) => {

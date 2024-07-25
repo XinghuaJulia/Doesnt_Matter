@@ -3,19 +3,23 @@ import { supabase } from '../lib/supabase'
 import { Session } from '@supabase/supabase-js'
 import { StyleSheet, View, Alert, Text, Image, TouchableOpacity } from 'react-native'
 import { Button } from '@rneui/themed'
-import { NavigationContainer, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 
 import { daysAgo, pointsThisWeek, pointsToday } from './utils/helper'
 
 import { COLORS } from '../constants/theme'
 
+const turtleHappy1 = require('../assets/turtle_sprites/turtle_happy1.png')
+const turtleHappy2 = require('../assets/turtle_sprites/turtle_happy2.png')
+const turtleHappy3 = require('../assets/turtle_sprites/turtle_happy3.png')
+const turtleHappy4 = require('../assets/turtle_sprites/turtle_happy4.png')
+const turtleHappy5 = require('../assets/turtle_sprites/turtle_happy5.png')
+const turtleSad = require('../assets/turtle_sprites/turtle_sad.png')
 
-
-
+const turtleHappy = [turtleHappy1, turtleHappy2, turtleHappy3, turtleHappy4, turtleHappy5]
  
 export default function HomeScreen_login({ route }) {
   const { session } = route.params
-
 
   useEffect(() => {
     if (session) getProfile();
@@ -30,6 +34,7 @@ export default function HomeScreen_login({ route }) {
   const [points, setPoints] = useState(0)
   const [points_week, setPointsWeek] = useState(0)
   const [activity, setActivity] = useState("You haven't earned any points yet, start today!")
+  const [petName, setPetName] = useState('Turtle')
 
   const navigation = useNavigation()
 
@@ -48,7 +53,7 @@ export default function HomeScreen_login({ route }) {
 
       const { data, error, status } = await supabase
         .from('profiles')
-        .select(`username, avatar_url, points, last_activity, points_week`)
+        .select(`username, avatar_url, points, last_activity, points_week, pet_name`)
         .eq('id', session?.user.id)
         .single()
 
@@ -61,8 +66,9 @@ export default function HomeScreen_login({ route }) {
       if (data) {
         setUsername(data.username)
         setPoints(data.points)
-        setActivity(data.last_activity)
+        setActivity(daysAgo(data.last_activity))
         setPointsWeek(data.points_week)
+        setPetName(data.pet_name)
 
         downloadImage(data.avatar_url)
 
@@ -123,7 +129,7 @@ export default function HomeScreen_login({ route }) {
 
       setPoints(tempPoints)
       setPointsWeek(tempPointsWeek)
-      setActivity(daysAgo(data.last_activity))
+      setActivity(daysAgo(new Date()))
 
       if (error) {
         throw error
@@ -152,35 +158,52 @@ export default function HomeScreen_login({ route }) {
     } 
   }
 
+  const virtualPetState = () => {
+    return points > 10 
+      ? turtleHappy[Math.floor(Math.random() * 5)]
+      : turtleSad
+  }
+
   return (
     <View style={styles.container}>
 
       <View>
-        {avatarUrl ? (
-          <Image source={{ uri: avatarUrl }} style={[ styles.avatar, styles.icon ]} />
-        ) : (
-          <View style={[ styles.avatar, styles.icon ]} />
-        )}
+        <View style={styles.horizontalContainer}>
+          {avatarUrl ? (
+            <Image source={{ uri: avatarUrl }} style={[ styles.avatar, styles.icon ]} />
+          ) : (
+            <View style={[ styles.avatar, styles.icon ]} />
+          )}
+          <View>
+            <Text style={ styles.title }>{username || "No username... create one now!"} </Text>
+            <Text>Last activity: {activity}</Text>
+          </View>
+        </View>
+
+        <Text>Your points today: {points || 0}</Text>
+        <Text>Your points this week: {points_week || 0}</Text>
+        <Text>{petName}'s state: {points > 10 ? "happy" : "sad"}</Text>
+      </View>
+
+
+      <View style={{alignItems: "center"}}>
+        <Image source={ virtualPetState() } style={{width: 300, height:300}}/>
       </View>
 
 
       <View>
-        <Text style={ styles.title }>{username} </Text>
+          <Button
+            title={'add points'}
+            color={COLORS.button}
+            onPress={() => updatePoints()}
+            disabled={loading}
+          />
+        <Text>Your pet {petName} is {points > 10 ? "happy, keep up the good work!" : "sad, start recycling today!"}</Text>
       </View>
-
-      <View>
-        <Button
-          title={'add points'}
-          color={COLORS.button}
-          onPress={() => updatePoints()}
-          disabled={loading}
-        />
-      </View>
-      <Text>Your points today: {points || 0}</Text>
-      <Text>Your points this week: {points_week || 0}</Text>
-      <Text>Last activity: {activity}</Text>
       
 
+
+      {/* 
 
       <Button title="Go to virtual pet screen" color={COLORS.button} onPress={() => navigation.navigate("Virtual Pet")} />
 
@@ -188,8 +211,6 @@ export default function HomeScreen_login({ route }) {
         <Button title="Sign Out" color={COLORS.button} onPress={() => supabase.auth.signOut()} />
       </View>
 
-        
-      {/* 
       <View>
         <View style={ styles.bottomTabs }>
           <TouchableOpacity>
@@ -233,8 +254,12 @@ export default function HomeScreen_login({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
     padding: 12,
+  },
+  horizontalContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+    gap: 10,
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -242,25 +267,25 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     color: COLORS.button,
   },
-  mt20: {
-    marginTop: 20,
-  },
   title: {
     fontSize: 28,
   },
   icon: {
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
   },
   avatar: {
     backgroundColor: 'grey',
     borderRadius: 50,
   },
-  bottomTabs: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+  containerTop: {
+    flex: 3,
   },
-  bottomAlign: {
-    marginTop: 290,
+  containerMiddle: {
+    flex: 6,
+    alignItems:"center",
+  },
+  containerBottom: {
+    flex: 1,
   }
 })

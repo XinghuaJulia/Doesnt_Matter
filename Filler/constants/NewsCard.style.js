@@ -5,6 +5,7 @@ import { SIZES, COLORS } from "./theme";
 const styles = StyleSheet.create({
   container: {
     marginTop: SIZES.xLarge,
+    flexDirection: "row",
   },
   header: {
     flexDirection: "row",
