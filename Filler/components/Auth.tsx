@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, StyleSheet, View, AppState, Image } from 'react-native'
+import { Alert, StyleSheet, View, AppState, Image, Text } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Button, Input } from '@rneui/themed'
 
@@ -53,7 +53,9 @@ export default function Auth() {
   return (
     <View style={styles.container}>
       <View style={{alignItems:"center"}}>
-        <Image source={ turtleGreetings } style={{width: 300, height:300}}/>
+        <Text style={styles.greetingsText}>Welcome to Filler!</Text>
+        <Text style={styles.greetingsText}>Ready to live more sustainably?</Text>
+        <Image source={ turtleGreetings } style={{width: 300, height:300, marginTop: 20}}/>
       </View>
 
       <View style={[styles.verticallySpaced, styles.mt20]}>
@@ -89,7 +91,7 @@ export default function Auth() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    marginTop: 50,
     padding: 12,
   },
   verticallySpaced: {
@@ -102,5 +104,11 @@ const styles = StyleSheet.create({
   },
   rightAligned: {
     alignContent: "flex-end",
-  }
+  }, 
+  greetingsText: {
+    fontSize: 20,
+    marginHorizontal: 10,
+    textAlign: "center",
+    fontWeight: "thin",
+  },
 })

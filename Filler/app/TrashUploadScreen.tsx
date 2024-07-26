@@ -11,15 +11,13 @@ import { daysAgo, pointsThisWeek, pointsToday } from '../components/utils/helper
 
 
 
-export default function TrashUploadScreen() {
+export default function TrashUploadScreen({ route }) {
+  const { session } = route.params
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [predictions, setPredictions] = useState(null);
   const [text, setText] = useState('');
   const [tips, setTips] = useState('Please scan trash for tips!')
-
-  const [session, setSession] = useState<Session | null>(null)
 
   const getPermissionAsync = async () => {
     if (Platform.OS !== 'web') {
@@ -64,27 +62,27 @@ const uploadImage = async (imageUri) => {
     });
 
 
-    // const response = await supabase.rpc('generate_image', {base64imagedata: base64ImageData});
+    const response = await supabase.rpc('generate_image', {base64imagedata: base64ImageData});
 
-    // setText(response.data.responses[0].labelAnnotations[0].description)
-    // console.log(response.data.responses[0].labelAnnotations[0].description)
-
-
+    setText(response.data.responses[0].labelAnnotations[0].description)
+    console.log(response.data.responses[0].labelAnnotations[0].description)
 
 
-    const request = new Request('http://172.19.171.134:3000/', {
-      method: "POST",
-      body: JSON.stringify({image: base64ImageData}),
-    });
 
-    const responsetest = await fetch(request)
 
-    console.log("processing img data at backend")
+    // const request = new Request('http://172.19.171.134:3000/', {
+    //   method: "POST",
+    //   body: JSON.stringify({image: base64ImageData}),
+    // });
 
-    const json = await responsetest.json()
+    // const responsetest = await fetch(request)
 
-    setText(json.message)
-    console.log(json.message)
+    // console.log("processing img data at backend")
+
+    // const json = await responsetest.json()
+
+    // setText(json.message)
+    // console.log(json.message)
 
   } catch (error) {
     console.error('Error during the image upload process:', error.response ? JSON.stringify(error.response.data) : error.message);
@@ -147,10 +145,6 @@ async function updatePoints() {
     await supabase.from('profiles').upsert(updates)
 
 
-    setPoints(tempPoints)
-    setPointsWeek(tempPointsWeek)
-    setActivity(daysAgo(data.last_activity))
-
     if (error) {
       throw error
     }
@@ -166,17 +160,17 @@ async function updatePoints() {
 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.text}>Upload trash here</Text>
+    <View style={styles.container}>
+      <Text style={styles.header}>Upload trash here</Text>
       <Button title="Choose a photo" color={COLORS.button} onPress={pickImageAsync} />
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+      {loading && <ActivityIndicator size="large" color={ COLORS.darkGreen } />}
       {selectedImage && (
         <Image source={{ uri: selectedImage }} style={styles.image} />
       )}
-      <Text>{ text }</Text>
+      <Text style={styles.result}>{ text }</Text>
       <Button title="Generate tips"color={COLORS.button} onPress={handlePress} />
-      <Text>Tips: { tips }</Text>
-    </SafeAreaView>
+      <Text style={styles.text}>Tips: { tips }</Text>
+    </View>
   );
 }
 
@@ -186,9 +180,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  text: {
+  header: {
     fontSize: 24,
     marginBottom: 20,
+  },
+  text: {
+    margin: 20,
+  },
+  result: {
+    margin: 20,
+    color: COLORS.darkGreen,
   },
   image: {
     height: 300,
@@ -199,12 +200,5 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: COLORS.button,
     borderRadius: 20,
-  },
-  predictionText: {
-    color: 'white',
-    fontWeight: 'bold',
-    textShadowColor: 'black',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
   },
 });

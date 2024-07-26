@@ -5,23 +5,25 @@ export const accurateInterval =  (time) => {
 };
 
 export const timeFormatDay = (time) => {
-  return time.toString().substring(0,10)
+  return time != ""
+         ? time.toString().substring(0,10)
+         : null
 }
 
 export const daysAgo = (time) => {
   const timeFormatted = timeFormatDay(time); 
-  console.log("unformatted: " + time)
-  console.log("formatted time: " + timeFormatted)
 
-  return dayjs(new Date()).isSame(time, 'day') 
+  return timeFormatted != null
+    ? dayjs(new Date()).isSame(time, 'day') 
     ? "Today, " + timeFormatted
-    : dayjs().diff(time, 'day') + " days ago, " + timeFormatted;
+    : dayjs().diff(time, 'day') + " days ago, " + timeFormatted
+    : "Start recycling today!"
 } 
 
 export const pointsToday = (time, points: number) => {
   const timeFormatted = timeFormatDay(time); 
 
-  return dayjs(new Date()).isSame(timeFormatted, 'day') 
+  return timeFormatted != null && dayjs(new Date()).isSame(timeFormatted, 'day') 
     ? points 
     : 0;
 }
@@ -29,7 +31,7 @@ export const pointsToday = (time, points: number) => {
 export const pointsThisWeek = (time, points: number) => {
   const timeFormatted = timeFormatDay(time); 
 
-  return dayjs(new Date()).isSame(timeFormatted, 'week') 
+  return timeFormatted != null && dayjs(new Date()).isSame(timeFormatted, 'week') 
     ? points 
     : 0;
 }

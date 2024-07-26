@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Session } from '@supabase/supabase-js'
 import TrashUploadScreen from '../app/TrashUploadScreen'
 import NewsScreen from '../app/NewsScreen'
-import Account from './Account'
+import Account from '../app/Account'
 import HomeScreen_login from './HomeScreen_login';
 
 

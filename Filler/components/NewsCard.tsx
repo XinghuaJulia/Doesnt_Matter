@@ -1,9 +1,9 @@
-import { View, Text, TouchableOpacity, Image, Linking, Alert, SafeAreaView } from "react-native";
-import { Session } from '@supabase/supabase-js'
+import { View, Text, TouchableOpacity, Image, Linking, Alert } from "react-native";
 import { supabase } from '../lib/supabase';
-import { pointsThisWeek, pointsToday, timeFormatDay } from './utils/helper'
+import { pointsThisWeek, pointsToday, daysAgo } from './utils/helper'
 
-import styles from "../constants/NewsCard.style";
+// import styles from "../constants/NewsCard.style";
+import styles from "../constants/NewsCard2.style";
 
 
 
@@ -46,23 +46,40 @@ const NewsCard = ({ item, session }) => {
     }
 
     return (
-        <TouchableOpacity
-            onPress={() => {handlePress()} }
-            style={styles.container}
-        >
-            <View>
-                <Image 
-                  source= {{ uri: item.urlToImage }}
-                  resizeMode= "contain"
-                  style= { styles.newsImage }
-                  />
-            </View>
-            <View>
-              <Text style= {styles.headerTitle}>{ item.title }</Text>
-              <Text>{ item.source.name } { timeFormatDay(item.publishedAt) }</Text>
-            </View>
-        </TouchableOpacity>
+
+    item.title != "[Removed]" ?
+      <TouchableOpacity activeOpacity={1} style={styles.container} onPress={handlePress}>
+        <Image
+          source={{
+            uri: item?.urlToImage ?? 'https://picsum.photos/800',
+            cache: 'force-cache',
+          }}
+          resizeMode={'cover'}
+          style={styles.image}
+        />
+        <View>
+          <Text style={styles.text}>{item?.title}</Text>
+          <Text style={styles.timestamp}>{daysAgo(item.publishedAt)}</Text>
+        </View>
+      </TouchableOpacity>
+       : <View></View> 
     )
 }
+
+//           <View style={styles.container}>
+//             <TouchableOpacity
+//               onPress={() => {handlePress()} }
+//               style={styles.horizontalContainer}
+//             >
+//               <Image 
+//                 source= {{ uri: item.urlToImage }}
+//                 resizeMode= "contain"
+//                 style= { styles.newsImage }
+//                 />
+//               <Text style= {styles.headerTitle}>{ item.title }</Text>
+//             </TouchableOpacity> 
+//             <Text style= {styles.descTitle}>{ daysAgo(item.publishedAt) }</Text>
+//           </View>
+//         : <View></View> 
 
 export default NewsCard;

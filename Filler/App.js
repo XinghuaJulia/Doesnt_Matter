@@ -6,7 +6,6 @@ import LoginScreen from './app/LoginScreen'
 
 
 import { COLORS } from './constants/theme'
-import Tabs from './components/Tabs'
 
 
 

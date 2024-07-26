@@ -5,12 +5,12 @@
     "slug": "doesnt-matter",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons/trash_icon2.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icons/trash_splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#fefee7"
     },
     "ios": {
       "supportsTablet": true,
@@ -19,13 +19,13 @@
     "android": {
       "runtimeVersion": "1.0.0",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/icons/trash_icon2.png",
+        "backgroundColor": "#fefee7"
       },
       "package": "com.uselesstrash06.Filler"
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "./assets/icons/trash_icon2.png",
       "bundler": "metro",
       "output": "server"
     },

@@ -32,7 +32,7 @@ export default function HomeScreen_login({ route }) {
   const [users, setUsers] = useState<{id: string}[]>([])
   const [points, setPoints] = useState(0)
   const [points_week, setPointsWeek] = useState(0)
-  const [activity, setActivity] = useState("You haven't earned any points yet, start today!")
+  const [activity, setActivity] = useState("")
   const [petName, setPetName] = useState('Turtle')
 
 
@@ -164,8 +164,7 @@ export default function HomeScreen_login({ route }) {
 
   return (
     <View style={styles.container}>
-
-      <View>
+      <View style= {styles.containerTop}>
         <View style={styles.horizontalContainer}>
           {avatarUrl ? (
             <Image source={{ uri: avatarUrl }} style={[ styles.avatar, styles.icon ]} />
@@ -174,77 +173,28 @@ export default function HomeScreen_login({ route }) {
           )}
           <View>
             <Text style={ styles.title }>{username} </Text>
-            <Text>Last activity: {activity}</Text>
+            <Text style={{ color: COLORS.gray}}>Last activity: {activity}</Text>
           </View>
         </View>
-
-        <Text>Your points today: {points || 0}</Text>
-        <Text>Your points this week: {points_week || 0}</Text>
-        <Text>{petName}'s state: {points > 10 ? "happy" : "sad"}</Text>
       </View>
 
 
-      <View style={{alignItems: "center"}}>
+      <View style={styles.containerMiddle}>
         <Image source={ virtualPetState() } style={{width: 300, height:300}}/>
       </View>
 
+      
 
-      <View>
-          <Button
+      <View style={styles.containerBottom}>
+        <Button
             title={'add points'}
             color={COLORS.button}
             onPress={() => updatePoints()}
             disabled={loading}
           />
-        <Text>Your pet {petName} is {points > 10 ? "happy, keep up the good work!" : "sad, start recycling today!"}</Text>
-      </View>
-      
-
-
-      {/* 
-
-      <Button title="Go to virtual pet screen" color={COLORS.button} onPress={() => navigation.navigate("Virtual Pet")} />
-
-      <View style={styles.verticallySpaced}>
-        <Button title="Sign Out" color={COLORS.button} onPress={() => supabase.auth.signOut()} />
+        <Text style={ styles.petStatus }>Your pet {petName} is {points > 10 ? "happy, keep up the good work!" : "sad, start recycling today!"}</Text>
       </View>
 
-      <View>
-        <View style={ styles.bottomTabs }>
-          <TouchableOpacity>
-            <Image source={ homeIcon } style= { styles.icon }/>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => navigation.navigate("Upload Trash", {
-            session: session
-          })}>
-            <Image source={ trashIcon } style= { styles.icon }/>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => navigation.navigate("News", {
-            session: session
-          })}>
-            <Image source={ newsIcon } style= { styles.icon }/>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => navigation.navigate("Account", {
-            session: session
-          })}>
-            <Image source={ profileIcon } style= { styles.icon }/>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      temporarily testing bottom tab
-      removed route.params requirements
-      */}
-      
-      
-      {/*
-
-      <Button title={"testing"} onPress={handlePress}/>
-      
-      */}
     </View>
   )
 }
@@ -252,6 +202,7 @@ export default function HomeScreen_login({ route }) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1, 
     padding: 12,
   },
   horizontalContainer: {
@@ -284,6 +235,12 @@ const styles = StyleSheet.create({
     alignItems:"center",
   },
   containerBottom: {
-    flex: 1,
+    flex: 2,
+  },
+  petStatus: {
+    fontSize: 18,
+    fontWeight: "900",
+    color: COLORS.gray,
+    margin: 20,
   }
 })

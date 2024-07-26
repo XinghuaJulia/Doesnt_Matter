@@ -4,19 +4,26 @@ import { SIZES, COLORS } from "./theme";
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: SIZES.xLarge,
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    margin: 10,
+  },
+  horizontalContainer: {
+    marginTop:5,
     flexDirection: "row",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
   },
   headerTitle: {
-    flex:1,
+    flexShrink: 1,
     flexWrap: 'wrap',
     fontSize: SIZES.large,
     color: COLORS.primary,
+  },
+  descTitle: {
+    color: COLORS.gray,
   },
   headerBtn: {
     fontSize: SIZES.medium,
@@ -28,6 +35,7 @@ const styles = StyleSheet.create({
   newsImage: {
     width: 100,
     height: 60,
+    borderRadius: 10,
   },
 });
 

@@ -48,7 +48,7 @@ export default function NewsScreen({ route }) {
       <View style={styles.headerTitle}>
           <View style={styles.cardsContainer}>
               {isLoading ? (
-                  <ActivityIndicator size= "large" color= {COLORS.primary}/>
+                  <ActivityIndicator size= "large" color= {COLORS.darkGreen}/>
               ) : error ? (
                   <Text>Something went wrong</Text>
               ) : (
