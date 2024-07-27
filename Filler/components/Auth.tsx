@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, StyleSheet, View, AppState, Image, Text } from 'react-native'
+import { Alert, StyleSheet, View, AppState, Image, Text, TouchableOpacity } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Button, Input } from '@rneui/themed'
 
@@ -58,7 +58,7 @@ export default function Auth() {
         <Image source={ turtleGreetings } style={{width: 300, height:300, marginTop: 20}}/>
       </View>
 
-      <View style={[styles.verticallySpaced, styles.mt20]}>
+      <View style={styles.verticallySpaced}>
         <Input
           label="Email"
           leftIcon={{ type: 'font-awesome', name: 'envelope' }}
@@ -79,11 +79,15 @@ export default function Auth() {
           autoCapitalize={'none'}
         />
       </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
+      <View style={styles.verticallySpaced}>
         <Button title="Sign in" color={ COLORS.button } disabled={loading} onPress={() => signInWithEmail()} />
       </View>
-      <View style={styles.rightAligned}>
-        <Button title="Sign up" color={ COLORS.button } disabled={loading} onPress={() => signUpWithEmail()} />
+
+      <View style={styles.horizontalContainer}>
+        <Text style={{color: COLORS.gray}}>Don't have an account yet? </Text>
+        <TouchableOpacity onPress={() => signUpWithEmail()}>
+          <Text style={{ color: COLORS.button }}>Sign up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -91,7 +95,7 @@ export default function Auth() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    marginTop: 30,
     padding: 12,
   },
   verticallySpaced: {
@@ -102,8 +106,9 @@ const styles = StyleSheet.create({
   mt20: {
     marginTop: 20,
   },
-  rightAligned: {
-    alignContent: "flex-end",
+  horizontalContainer: {
+    flexDirection: "row",
+    alignSelf: "center",
   }, 
   greetingsText: {
     fontSize: 20,

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Session } from '@supabase/supabase-js'
 import { StyleSheet, View, Alert, Text, Image, TouchableOpacity } from 'react-native'
-import { Button } from '@rneui/themed'
 
 
 import { daysAgo, pointsThisWeek, pointsToday } from './utils/helper'
@@ -23,26 +21,21 @@ export default function HomeScreen_login({ route }) {
 
   useEffect(() => {
     if (session) getProfile();  
+    if (session) setInterval(getProfile, 15000);
     if (!session) supabase.auth.signOut();
   }, [])
+
+  
 
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState("Don't have a username... Create one now!")
   const [avatarUrl, setAvatarUrl] = useState('')
-  const [users, setUsers] = useState<{id: string}[]>([])
   const [points, setPoints] = useState(0)
   const [points_week, setPointsWeek] = useState(0)
   const [activity, setActivity] = useState("")
   const [petName, setPetName] = useState('Turtle')
 
 
-
-  async function getAllUsers() {
-    const {data, error} = await supabase.from('profiles').select('id');
-    if (error) console.log(error?.message);
-    setUsers(data ?? []);
-    console.log("getAllUsers called")
-  }
 
   async function getProfile() {
     try {
@@ -54,8 +47,6 @@ export default function HomeScreen_login({ route }) {
         .select(`username, avatar_url, points, last_activity, points_week, pet_name`)
         .eq('id', session?.user.id)
         .single()
-
-      console.log("profile status: " + status)
       
       if (error && status !== 406) {
         throw error
@@ -69,9 +60,6 @@ export default function HomeScreen_login({ route }) {
         setPetName(data.pet_name)
 
         downloadImage(data.avatar_url)
-
-        console.log("points: "+data.points+"     points_week: "+data.points_week)
-
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -82,6 +70,7 @@ export default function HomeScreen_login({ route }) {
       console.log("getProfile called")
     }
   }
+
 
   async function downloadImage(path: string) {
     try {
@@ -112,8 +101,8 @@ export default function HomeScreen_login({ route }) {
         .eq('id', session?.user.id)
         .single()
 
-      const tempPoints = pointsToday(data.last_activity ? data.last_activity : new Date(), data.points ? data.points : 0) + 1
-      const tempPointsWeek = pointsThisWeek(data.last_activity ? data.last_activity : new Date(), data.points_week ? data.points_week : 0) + 1
+      const tempPoints = pointsToday(data.last_activity, data.points) + 1
+      const tempPointsWeek = pointsThisWeek(data.last_activity, data.points_week) + 1
 
       const updates = {
         id: session?.user.id,
@@ -157,7 +146,7 @@ export default function HomeScreen_login({ route }) {
   }
 
   const virtualPetState = () => {
-    return points > 10 
+    return points >= 1 
       ? turtleHappy[Math.floor(Math.random() * 5)]
       : turtleSad
   }
@@ -176,6 +165,8 @@ export default function HomeScreen_login({ route }) {
             <Text style={{ color: COLORS.gray}}>Last activity: {activity}</Text>
           </View>
         </View>
+
+        <Text style={ styles.tips }>Psst, earn points by uploading a trash image, generating tips, or reading a news article!</Text>
       </View>
 
 
@@ -186,13 +177,16 @@ export default function HomeScreen_login({ route }) {
       
 
       <View style={styles.containerBottom}>
-        <Button
+        {/*
+          <Button
             title={'add points'}
             color={COLORS.button}
             onPress={() => updatePoints()}
             disabled={loading}
           />
-        <Text style={ styles.petStatus }>Your pet {petName} is {points > 10 ? "happy, keep up the good work!" : "sad, start recycling today!"}</Text>
+        */}
+        
+        <Text style={ styles.petStatus }>Your pet {petName} is {points >= 1 ? "happy, keep up the good work!" : "sad, start recycling today!"}</Text>
       </View>
 
     </View>
@@ -242,5 +236,10 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: COLORS.gray,
     margin: 20,
+  },
+  tips: {
+    color: COLORS.gray,
+    margin: 20,
+    textAlign: "center",
   }
 })

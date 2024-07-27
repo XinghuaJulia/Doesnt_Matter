@@ -5,7 +5,7 @@ export const accurateInterval =  (time) => {
 };
 
 export const timeFormatDay = (time) => {
-  return time != ""
+  return time != "" && time != null
          ? time.toString().substring(0,10)
          : null
 }

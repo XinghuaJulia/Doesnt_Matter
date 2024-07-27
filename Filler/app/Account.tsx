@@ -6,6 +6,7 @@ import Avatar from '../components/Avatar'
 import { daysAgo, pointsThisWeek, pointsToday } from '../components/utils/helper'
 
 import { COLORS } from '../constants/theme'
+import { TouchableOpacity } from 'react-native'
 
 
 export default function Account({ route }) {
@@ -13,14 +14,13 @@ export default function Account({ route }) {
 
   useEffect(() => {
     if (session) getProfile();
-    if (session) getAllUsers();
+    if (session) setInterval(getPoints, 15000)
   }, [session])
 
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState('')
   const [petName, setPetName] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
-  const [users, setUsers] = useState<{id: string}[]>([])
   const [points, setPoints] = useState(0)
   const [points_week, setPointsWeek] = useState(0)
   const [activity, setActivity] = useState("You haven't earned any points yet, start today!")
@@ -28,12 +28,6 @@ export default function Account({ route }) {
 
   
 
-  async function getAllUsers() {
-    const {data, error} = await supabase.from('profiles').select('id');
-    if (error) console.log(error?.message);
-    setUsers(data ?? []);
-    console.log("getAllUsers called")
-  }
 
   async function getProfile() {
     try {
@@ -60,6 +54,38 @@ export default function Account({ route }) {
         setPointsWeek(data.points_week)
 
         console.log("points: "+data.points+"     points_week: "+data.points_week)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      }
+    } finally {
+      setLoading(false)
+      console.log("getProfile called")
+    }
+  }
+
+  async function getPoints() {
+    try {
+      setLoading(true)
+      if (!session?.user) throw new Error('No user on the session!')
+
+      const { data, error, status } = await supabase
+        .from('profiles')
+        .select(`points, last_activity, points_week`)
+        .eq('id', session?.user.id)
+        .single()
+      
+      if (error && status !== 406) {
+        throw error
+      }
+
+      if (data) {
+        setPoints(data.points)
+        setActivity(daysAgo(data.last_activity))
+        setPointsWeek(data.points_week)
+
+        console.log("points updated")
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -142,14 +168,23 @@ export default function Account({ route }) {
         />
       </View>
 
-      
-
+      {/* 
       <View style={styles.verticallySpaced}>
         <Button 
           title="Sign Out" 
           color={COLORS.button}
           onPress={() => supabase.auth.signOut()} 
         />
+      </View>
+      */}
+
+      
+
+      <View style={styles.horizontalContainer}>
+        <Text style={{color: COLORS.gray}}>{petName} is sorry to see you go... </Text>
+        <TouchableOpacity onPress={() => supabase.auth.signOut()}>
+          <Text style={{ color: COLORS.button }}>Sign out</Text>
+        </TouchableOpacity>
       </View>
 
     </ScrollView>
@@ -171,4 +206,8 @@ const styles = StyleSheet.create({
   desc: {
     color: COLORS.gray,
   },
+  horizontalContainer: {
+    flexDirection: "row",
+    alignSelf: "center",
+  }
 })
