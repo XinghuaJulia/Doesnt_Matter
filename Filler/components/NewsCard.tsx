@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, Image, Linking, Alert } from "react-nativ
 import { Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase';
 import { daysAgo, pointsThisWeek, pointsToday } from './utils/helper'
+import React from 'react';
 
 import styles from "../constants/NewsCard.style";
 

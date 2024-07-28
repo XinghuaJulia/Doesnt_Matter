@@ -1,69 +1,62 @@
-import { useEffect, useState } from "react";
-import { View, ScrollView, FlatList, SafeAreaView, Text, ActivityIndicator } from "react-native";
-import axios from "axios";
-import { supabase } from '../lib/supabase'
-import { Session } from '@supabase/supabase-js'
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+import NewsCard from '../components/NewsCard'; // Adjust the path as necessary
+import { Linking, Alert } from 'react-native';
+import { supabase } from '../lib/supabase';
 
-import { COLORS, SIZES } from "../constants/theme";
-import styles from "../constants/NewsCard.style";
+// Mock the dependencies
+jest.mock('react-native/Libraries/Linking/Linking', () => ({
+  openURL: jest.fn(),
+}));
+jest.mock('../lib/supabase', () => ({
+  supabase: {
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn(() => ({
+        data: { points: 10, last_activity: new Date(), points_week: 5 },
+        error: null,
+        status: 200,
+      })),
+      upsert: jest.fn(),
+    })),
+  },
+}));
+jest.mock('react-native/Libraries/Alert/Alert', () => ({
+  alert: jest.fn(),
+}));
 
-import NewsCard from '../components/NewsCard';
+describe('NewsCard Component', () => {
+  const mockItem = {
+    title: 'Test News Title',
+    source: { name: 'Test Source' },
+    urlToImage: 'https://example.com/image.jpg',
+    url: 'https://example.com',
+    publishedAt: '2024-07-29T12:00:00Z',
+  };
 
+  const mockSession = {
+    user: {
+      id: 'test-user-id',
+    },
+  };
 
-export default function NewsScreen( {route} ) {
-    const { session } : { session: Session } = route.params
+    it('renders correctly with provided data', () => {
+    const { getByText } = render(<NewsCard item={mockItem} session={mockSession} />);
 
-    const [data, setData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const error = false;
+    expect(getByText('Test News Title')).toBeTruthy();
+    // Use a partial match or regex if the text isn't an exact match
+    // expect(getByText(/Test Source/i)).toBeTruthy();
+    expect(getByText(/2024-07-29T12:00:00Z/i)).toBeTruthy();
+    });
 
-    const fetchData = async () => {
-        setIsLoading(true);
+  it('handles press event correctly', () => {
+    const { getByText } = render(<NewsCard item={mockItem} session={mockSession} />);
+    const touchable = getByText('Test News Title');
 
-        try {
-          const searchField = encodeURI("environment AND sustainable")
-    
-          const result = await supabase.rpc('generate_news', {description: 'Is ' +' generally fit for recycling, answer only using yes or no.'});
-    
-          setData(result.data.articles);
-        } catch (error) {
-          console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
-      };
+    fireEvent.press(touchable);
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const refetch = () => {
-        setIsLoading(true);
-        fetchData();
-    }
-
-    return (
-        <View style={styles.headerTitle}>
-            <Text>News Here</Text>
-
-            <View style={styles.cardsContainer}>
-                {isLoading ? (
-                    <ActivityIndicator size= "large" color= {COLORS.primary}/>
-                ) : error ? (
-                    <Text>Something went wrong</Text>
-                ) : (
-                    <FlatList
-                        data={ data }
-                        renderItem={( { item }) => (
-                            <NewsCard
-                              item = { item }
-                              session = { session }
-                            />
-                        )}
-                        contentContainerStyle={{ columnGap: SIZES.large }}
-                    />
-                )}
-            </View>
-        </View>
-    )
-}
+    expect(supabase.from).toHaveBeenCalledWith('profiles');
+    expect(Linking.openURL).toHaveBeenCalledWith('https://example.com');
+  });
+});
