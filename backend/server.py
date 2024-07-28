@@ -46,20 +46,25 @@ def upload():
     arr = loaded_model.predict(np.expand_dims(resize/255, 0))
 
     yhat_list = arr.tolist()[0]
-    max_index = yhat_list.index(max(yhat_list))D
+    max_index = yhat_list.index(max(yhat_list))
 
-    result = 'cigarette'
+    lst = ['cardboard', 'cigarette butt',
+           'e-waste', 'glass', 'medical waste',
+           'metal waste', 'paper waste','plastic waste']
+    result = lst[max_index - 1]
 
-    if max_index == 0:
-        result = 'cigarette'
-    elif max_index == 1:
-        result = 'plastic bag'
-    elif max_index == 2:
-        result = 'platic bottle'
-    elif max_index == 3:
-        result = 'plastic container'
-    else:
-        result = 'plastic cup'
+    # result = 'cigarette'
+
+    # # if max_index == 0:
+    # #     result = 'cigarette'
+    # # elif max_index == 1:
+    # #     result = 'plastic bag'
+    # # elif max_index == 2:
+    # #     result = 'platic bottle'
+    # # elif max_index == 3:
+    # #     result = 'plastic container'
+    # # else:
+    # #     result = 'plastic cup'
 
     return jsonify({"message": result})
 
